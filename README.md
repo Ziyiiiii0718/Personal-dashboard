@@ -1,64 +1,36 @@
-# Personal Life Dashboard
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A private, offline-first web app for managing my daily life in one place:
-- Todo list (manual + auto-generated from upcoming deadlines)
-- Calendar (deadlines + exams combined)
-- Fitness training log
-- Weight tracking (trend chart + goal weight)
-- Diet log
-- Short-term goals
-- Recipes
-- **Password-protected encrypted diary** (cannot view without unlocking)
+## Getting Started
 
-This app is designed for **personal use**, keeping the UI simple and fast. Data is stored locally by default.
+First, run the development server:
 
----
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Features
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### Todo
-- Add / edit / complete / delete todos
-- Todos can have an optional due date
-- **Auto-add rule:** Any deadline within the next **7 days** will automatically create a todo (no duplicates)
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-### Calendar (Deadlines + Exams)
-- One combined list with a `type` field: `ddl` or `exam`
-- Sort by date, filter by type
-- Upcoming (next 7 days) items feed into Todo automatically
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-### Fitness
-- Log workouts with: date, activity, duration, intensity, notes
+## Learn More
 
-### Weight
-- Log weight entries (date + value)
-- Display a **trend line chart**
-- Set a **goal weight** and show it as a reference in the chart
+To learn more about Next.js, take a look at the following resources:
 
-### Diet
-- Log meals by date and meal type (breakfast/lunch/dinner/snack)
-- Optional notes (no forced calorie calculations)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-### Goals
-- Track short-term goals with deadline + progress + notes
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-### Recipes
-- Save recipes with: title, ingredients, steps, tags, time
+## Deploy on Vercel
 
-### Diary (Password Locked)
-- Diary entries are **encrypted client-side**
-- You must unlock with a password to view or edit
-- Only ciphertext is stored locally (no plaintext saved)
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
----
-
-## Tech Stack (Recommended)
-- Next.js + TypeScript
-- Tailwind CSS
-- Web Crypto API for diary encryption (PBKDF2 + AES-GCM)
-- Local storage (localStorage) for persistence
-- A lightweight chart library (e.g., Chart.js) for weight trends
-
----
-
-## Project Structure (Suggested)
-
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
