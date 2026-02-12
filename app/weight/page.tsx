@@ -3,6 +3,7 @@
 import "chart.js/auto";
 import { useCallback, useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+import { Button, Card, Input, PageLayout } from "../components/ui";
 import type { WeightEntry } from "./types";
 import {
   loadEntries,
@@ -118,184 +119,164 @@ export default function WeightPage() {
   })();
 
   if (!mounted) {
-    return (
-      <div>
-        <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          Weight
-        </h1>
-        <p className="text-zinc-500 dark:text-zinc-400">Loading…</p>
-      </div>
-    );
+    return <PageLayout title="Weight" loading />;
   }
 
   return (
-    <div>
-      <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-        Weight
-      </h1>
-
-      {/* Summary + goal */}
-      <div className="mb-6 flex flex-wrap items-center gap-4 rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
-        <div>
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Current weight
-          </span>
-          <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-            {currentKg != null ? `${currentKg} kg` : "—"}
-          </p>
-        </div>
-        <div>
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Goal weight
-          </span>
-          <input
-            type="number"
-            step="0.1"
-            min="0"
-            value={goalInput}
-            onChange={(e) => setGoalInput(e.target.value)}
-            onBlur={handleGoalBlur}
-            placeholder="Set goal (kg)"
-            className="mt-0.5 w-24 rounded border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-          />
-        </div>
-        {goalDelta != null && (
+    <PageLayout title="Weight">
+      <Card>
+        <div className="flex flex-wrap items-end gap-6">
           <div>
             <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              Delta to goal
+              Current weight
             </span>
             <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-              {goalDelta > 0
-                ? `${goalDelta.toFixed(1)} kg to go`
-                : goalDelta < 0
-                  ? `${(-goalDelta).toFixed(1)} kg below goal`
-                  : "At goal"}
+              {currentKg != null ? `${currentKg} kg` : "—"}
             </p>
           </div>
-        )}
-      </div>
-
-      {/* Add entry form */}
-      <form
-        onSubmit={handleAdd}
-        className="mb-6 flex flex-wrap items-end gap-3 rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50"
-      >
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Date
-          </span>
-          <input
-            type="date"
-            value={dateISO}
-            onChange={(e) => setDateISO(e.target.value)}
-            className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Weight (kg)
-          </span>
-          <input
-            type="number"
-            step="0.1"
-            min="0"
-            value={weightKg}
-            onChange={(e) => setWeightKg(e.target.value)}
-            placeholder="e.g. 72.5"
-            className="w-24 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            required
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Note (optional)
-          </span>
-          <input
-            type="text"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Optional"
-            className="w-40 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-          />
-        </label>
-        <button
-          type="submit"
-          className="rounded bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
-        >
-          Add entry
-        </button>
-      </form>
-
-      {/* Chart */}
-      {entries.length > 0 ? (
-        <div className="mb-8 h-64 w-full max-w-2xl">
-          <Line
-            data={chartData}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { position: "top" },
-              },
-              scales: {
-                x: { title: { display: true, text: "Date" } },
-                y: {
-                  title: { display: true, text: "Weight (kg)" },
-                  beginAtZero: false,
-                },
-              },
-            }}
-          />
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              Goal weight
+            </span>
+            <Input
+              type="number"
+              step="0.1"
+              min={0}
+              value={goalInput}
+              onChange={(e) => setGoalInput(e.target.value)}
+              onBlur={handleGoalBlur}
+              placeholder="Set goal (kg)"
+              className="w-28"
+            />
+          </label>
+          {goalDelta != null && (
+            <div>
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Delta to goal
+              </span>
+              <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+                {goalDelta > 0
+                  ? `${goalDelta.toFixed(1)} kg to go`
+                  : goalDelta < 0
+                    ? `${(-goalDelta).toFixed(1)} kg below goal`
+                    : "At goal"}
+              </p>
+            </div>
+          )}
         </div>
+      </Card>
+
+      <Card>
+        <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-4">
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              Date
+            </span>
+            <Input
+              type="date"
+              value={dateISO}
+              onChange={(e) => setDateISO(e.target.value)}
+              required
+            />
+          </label>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              Weight (kg)
+            </span>
+            <Input
+              type="number"
+              step="0.1"
+              min={0}
+              value={weightKg}
+              onChange={(e) => setWeightKg(e.target.value)}
+              placeholder="e.g. 72.5"
+              className="w-28"
+              required
+            />
+          </label>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              Note (optional)
+            </span>
+            <Input
+              type="text"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Optional"
+              className="w-40"
+            />
+          </label>
+          <Button type="submit">Add entry</Button>
+        </form>
+      </Card>
+
+      {entries.length > 0 ? (
+        <Card>
+          <div className="h-64 w-full">
+            <Line
+              data={chartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: "top" } },
+                scales: {
+                  x: { title: { display: true, text: "Date" } },
+                  y: { title: { display: true, text: "Weight (kg)" }, beginAtZero: false },
+                },
+              }}
+            />
+          </div>
+        </Card>
       ) : (
-        <div className="mb-8 flex h-48 max-w-2xl items-center justify-center rounded-lg border border-dashed border-zinc-300 dark:border-zinc-600">
+        <div className="flex h-48 items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-white/50 dark:border-zinc-700 dark:bg-white/5">
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
             Add entries to see the trend chart.
           </p>
         </div>
       )}
 
-      {/* List */}
       <div>
-        <h2 className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        <h2 className="mb-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           Entries
         </h2>
         {sorted.length === 0 ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
             No entries yet. Add one above.
           </p>
         ) : (
-          <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
-            {sorted.map((entry) => (
-              <li
-                key={entry.id}
-                className="flex items-center justify-between gap-2 py-2 first:pt-0"
-              >
-                <div>
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                    {entry.weightKg} kg
-                  </span>
-                  <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
-                    {formatDate(entry.dateISO)}
-                  </span>
-                  {entry.note && (
-                    <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
-                      — {entry.note}
-                    </span>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(entry.id)}
-                  className="text-sm text-red-600 hover:underline dark:text-red-400"
+          <Card>
+            <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
+              {sorted.map((entry) => (
+                <li
+                  key={entry.id}
+                  className="flex items-center justify-between gap-2 py-3 first:pt-0"
                 >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <div>
+                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                      {entry.weightKg} kg
+                    </span>
+                    <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
+                      {formatDate(entry.dateISO)}
+                    </span>
+                    {entry.note && (
+                      <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
+                        — {entry.note}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(entry.id)}
+                    className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </Card>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }

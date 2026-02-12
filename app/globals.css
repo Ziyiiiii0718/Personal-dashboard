@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f6f4;
+  --foreground: #3f3f46;
+  --muted: #71717a;
+  --border: rgba(0, 0, 0, 0.06);
+  --link: #52525b;
+  --link-hover: #18181b;
 }
 
 @theme inline {
@@ -14,13 +18,49 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #09090b;
+    --foreground: #fafafa;
+    --muted: #a1a1aa;
+    --border: rgba(255, 255, 255, 0.08);
+    --link: #a1a1aa;
+    --link-hover: #fafafa;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Airier typography and spacing */
+h1, h2, h3 {
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+/* Consistent link styles */
+a {
+  color: var(--link);
+  transition: color 0.15s ease;
+}
+a:hover {
+  color: var(--link-hover);
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+/* Optional: soften focus ring for form controls (keep visible) */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
 }

@@ -1,12 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { Badge, Button, Card, Input, PageLayout, Select, Textarea } from "../components/ui";
 import type { WorkoutEntry, WorkoutCategory, Intensity } from "./types";
-import {
-  CATEGORY_LABELS,
-  INTENSITY_LABELS,
-  WORKOUT_CATEGORIES,
-} from "./types";
+import { CATEGORY_LABELS, INTENSITY_LABELS, WORKOUT_CATEGORIES } from "./types";
 import { loadEntries, saveEntries } from "./storage";
 
 function todayISO(): string {
@@ -53,9 +50,7 @@ export default function FitnessPage() {
   const [durationMin, setDurationMin] = useState("");
   const [intensity, setIntensity] = useState<Intensity | "">("");
   const [notes, setNotes] = useState("");
-  const [filterCategory, setFilterCategory] = useState<WorkoutCategory | "all">(
-    "all"
-  );
+  const [filterCategory, setFilterCategory] = useState<WorkoutCategory | "all">("all");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -80,8 +75,7 @@ export default function FitnessPage() {
         dateISO,
         category,
         title: trimmed,
-        durationMin:
-          dur != null && Number.isFinite(dur) && dur >= 0 ? dur : undefined,
+        durationMin: dur != null && Number.isFinite(dur) && dur >= 0 ? dur : undefined,
         intensity: intensity || undefined,
         notes: notes.trim() || undefined,
         createdAt: new Date().toISOString(),
@@ -101,10 +95,7 @@ export default function FitnessPage() {
   const today = todayISO();
   const todayEntries = entries.filter((e) => e.dateISO === today);
   const todaySessions = todayEntries.length;
-  const todayDuration = todayEntries.reduce(
-    (sum, e) => sum + (e.durationMin ?? 0),
-    0
-  );
+  const todayDuration = todayEntries.reduce((sum, e) => sum + (e.durationMin ?? 0), 0);
 
   const filtered = entries.filter((e) => {
     if (filterCategory !== "all" && e.category !== filterCategory) return false;
@@ -119,185 +110,118 @@ export default function FitnessPage() {
   const grouped = groupByDateSorted(filtered);
 
   if (!mounted) {
-    return (
-      <div>
-        <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          Fitness
-        </h1>
-        <p className="text-zinc-500 dark:text-zinc-400">Loading…</p>
-      </div>
-    );
+    return <PageLayout title="Fitness" loading />;
   }
 
   return (
-    <div>
-      <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-        Fitness
-      </h1>
+    <PageLayout title="Fitness">
+      <Card>
+        <div className="flex flex-wrap gap-6">
+          <div>
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              Today&apos;s sessions
+            </span>
+            <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+              {todaySessions}
+            </p>
+          </div>
+          <div>
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              Total duration today
+            </span>
+            <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+              {todayDuration > 0 ? `${todayDuration} min` : "—"}
+            </p>
+          </div>
+        </div>
+      </Card>
 
-      {/* Today summary */}
-      <div className="mb-6 flex flex-wrap gap-4 rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
-        <div>
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Today&apos;s sessions
-          </span>
-          <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-            {todaySessions}
-          </p>
-        </div>
-        <div>
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Total duration today
-          </span>
-          <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
-            {todayDuration > 0 ? `${todayDuration} min` : "—"}
-          </p>
-        </div>
-      </div>
-
-      {/* Add form */}
-      <form
-        onSubmit={handleSubmit}
-        className="mb-6 rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50"
-      >
-        <div className="mb-3 flex flex-wrap gap-4">
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              Date
-            </span>
-            <input
-              type="date"
-              value={dateISO}
-              onChange={(e) => setDateISO(e.target.value)}
-              className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              Category
-            </span>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value as WorkoutCategory)}
-              className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            >
-              {WORKOUT_CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {CATEGORY_LABELS[c]}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <div className="mb-3">
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              Title
-            </span>
-            <input
+      <Card>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-wrap gap-4">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Date</span>
+              <Input type="date" value={dateISO} onChange={(e) => setDateISO(e.target.value)} />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Category</span>
+              <Select value={category} onChange={(e) => setCategory(e.target.value as WorkoutCategory)} className="w-40">
+                {WORKOUT_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
+                ))}
+              </Select>
+            </label>
+          </div>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Title</span>
+            <Input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Morning run"
-              className="w-full max-w-md rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
               required
             />
           </label>
-        </div>
-        <div className="mb-3 flex flex-wrap gap-4">
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              Duration (min, optional)
-            </span>
-            <input
-              type="number"
-              step="1"
-              min="0"
-              value={durationMin}
-              onChange={(e) => setDurationMin(e.target.value)}
-              placeholder="e.g. 45"
-              className="w-24 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            />
+          <div className="flex flex-wrap gap-4">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Duration (min, optional)</span>
+              <Input
+                type="number"
+                step={1}
+                min={0}
+                value={durationMin}
+                onChange={(e) => setDurationMin(e.target.value)}
+                placeholder="e.g. 45"
+                className="w-28"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Intensity (optional)</span>
+              <Select value={intensity} onChange={(e) => setIntensity(e.target.value as Intensity | "")} className="w-32">
+                <option value="">—</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </Select>
+            </label>
+          </div>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Notes (optional)</span>
+            <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional notes" rows={2} />
           </label>
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              Intensity (optional)
-            </span>
-            <select
-              value={intensity}
-              onChange={(e) =>
-                setIntensity(e.target.value as Intensity | "")
-              }
-              className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            >
-              <option value="">—</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </label>
-        </div>
-        <div className="mb-3">
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              Notes (optional)
-            </span>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Optional notes"
-              rows={2}
-              className="w-full max-w-md rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            />
-          </label>
-        </div>
-        <button
-          type="submit"
-          className="rounded bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
-        >
-          Add entry
-        </button>
-      </form>
+          <Button type="submit">Add entry</Button>
+        </form>
+      </Card>
 
-      {/* Filters */}
-      <div className="mb-4 flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-4">
         <label className="flex items-center gap-2">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Category
-          </span>
-          <select
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Category</span>
+          <Select
             value={filterCategory}
-            onChange={(e) =>
-              setFilterCategory(e.target.value as WorkoutCategory | "all")
-            }
-            className="rounded border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+            onChange={(e) => setFilterCategory(e.target.value as WorkoutCategory | "all")}
+            className="w-36"
           >
             <option value="all">All</option>
             {WORKOUT_CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {CATEGORY_LABELS[c]}
-              </option>
+              <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
             ))}
-          </select>
+          </Select>
         </label>
         <label className="flex flex-1 min-w-[180px] items-center gap-2">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Search
-          </span>
-          <input
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Search</span>
+          <Input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Title or notes…"
-            className="flex-1 rounded border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+            className="flex-1"
           />
         </label>
       </div>
 
-      {/* Grouped list */}
       <div>
         {grouped.length === 0 ? (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
             {entries.length === 0
               ? "No workout entries yet. Add one above."
               : "No entries match the current filters."}
@@ -306,55 +230,55 @@ export default function FitnessPage() {
           <ul className="space-y-6">
             {grouped.map(({ date, entries: dayEntries }) => (
               <li key={date}>
-                <h2 className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                <h2 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
                   {formatDate(date)}
                 </h2>
-                <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
-                  {dayEntries.map((entry) => (
-                    <li
-                      key={entry.id}
-                      className="flex flex-wrap items-start justify-between gap-2 py-2 first:pt-0"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                            {entry.title}
-                          </span>
-                          <span className="rounded bg-zinc-200 px-1.5 py-0.5 text-xs text-zinc-600 dark:bg-zinc-600 dark:text-zinc-300">
-                            {CATEGORY_LABELS[entry.category]}
-                          </span>
-                          {entry.durationMin != null && (
-                            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                              {entry.durationMin} min
+                <Card>
+                  <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
+                    {dayEntries.map((entry) => (
+                      <li
+                        key={entry.id}
+                        className="flex flex-wrap items-start justify-between gap-2 py-3 first:pt-0"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                              {entry.title}
                             </span>
-                          )}
-                          {entry.intensity && (
-                            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                              {INTENSITY_LABELS[entry.intensity]}
-                            </span>
+                            <Badge>{CATEGORY_LABELS[entry.category]}</Badge>
+                            {entry.durationMin != null && (
+                              <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                                {entry.durationMin} min
+                              </span>
+                            )}
+                            {entry.intensity && (
+                              <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                                {INTENSITY_LABELS[entry.intensity]}
+                              </span>
+                            )}
+                          </div>
+                          {entry.notes && (
+                            <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                              {entry.notes}
+                            </p>
                           )}
                         </div>
-                        {entry.notes && (
-                          <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
-                            {entry.notes}
-                          </p>
-                        )}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(entry.id)}
-                        className="text-sm text-red-600 hover:underline dark:text-red-400"
-                      >
-                        Delete
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(entry.id)}
+                          className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
               </li>
             ))}
           </ul>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }

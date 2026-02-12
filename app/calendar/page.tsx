@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { Badge, Button, Card, Input, PageLayout, Select } from "../components/ui";
 import type { DeadlineItem, DeadlineType } from "./types";
 import { loadDeadlines, saveDeadlines } from "./storage";
 import { loadTodos, saveTodos } from "../todo/storage";
@@ -93,144 +94,129 @@ export default function CalendarPage() {
   const sorted = sortByDate(items);
 
   if (!mounted) {
-    return (
-      <div>
-        <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          Calendar
-        </h1>
-        <p className="text-zinc-500 dark:text-zinc-400">Loading…</p>
-      </div>
-    );
+    return <PageLayout title="Calendar" loading />;
   }
 
   return (
-    <div>
-      <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-        Calendar
-      </h1>
+    <PageLayout title="Calendar">
+      <Card>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-wrap gap-4">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Title
+              </span>
+              <Input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Essay due"
+                className="w-48"
+                required
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Type
+              </span>
+              <Select
+                value={type}
+                onChange={(e) => setType(e.target.value as DeadlineType)}
+                className="w-36"
+              >
+                <option value="ddl">Deadline</option>
+                <option value="exam">Exam</option>
+              </Select>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Date
+              </span>
+              <Input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                required
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                Notes (optional)
+              </span>
+              <Input
+                type="text"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Optional"
+                className="w-40"
+              />
+            </label>
+          </div>
+          <div className="flex gap-2">
+            <Button type="submit">{editingId ? "Update" : "Add"}</Button>
+            {editingId && (
+              <Button type="button" variant="secondary" onClick={resetForm}>
+                Cancel
+              </Button>
+            )}
+          </div>
+        </form>
+      </Card>
 
-      <form
-        onSubmit={handleSubmit}
-        className="mb-8 flex flex-wrap items-end gap-3 rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50"
-      >
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Title
-          </span>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Essay due"
-            className="w-48 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            required
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Type
-          </span>
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as DeadlineType)}
-            className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-          >
-            <option value="ddl">Deadline</option>
-            <option value="exam">Exam</option>
-          </select>
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Date
-          </span>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-            required
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Notes (optional)
-          </span>
-          <input
-            type="text"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Optional"
-            className="w-40 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
-          />
-        </label>
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="rounded bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
-          >
-            {editingId ? "Update" : "Add"}
-          </button>
-          {editingId && (
-            <button
-              type="button"
-              onClick={resetForm}
-              className="rounded border border-zinc-300 px-3 py-1.5 text-sm dark:border-zinc-600 dark:text-zinc-300"
-            >
-              Cancel
-            </button>
-          )}
-        </div>
-      </form>
-
-      <div className="space-y-1">
+      <div>
+        <h2 className="mb-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+          Deadlines
+        </h2>
         {sorted.length === 0 ? (
-          <p className="text-zinc-500 dark:text-zinc-400">
+          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
             No deadlines yet. Add one above.
           </p>
         ) : (
-          <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
-            {sorted.map((item) => (
-              <li
-                key={item.id}
-                className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0"
-              >
-                <div className="min-w-0 flex-1">
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                    {item.title}
-                  </span>
-                  <span className="ml-2 rounded bg-zinc-200 px-1.5 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-600 dark:text-zinc-300">
-                    {item.type === "exam" ? "Exam" : "DDL"}
-                  </span>
-                  <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
-                    {formatDate(item.date)}
-                  </span>
-                  {item.notes && (
-                    <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
-                      {item.notes}
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(item)}
-                    className="text-sm text-zinc-600 hover:underline dark:text-zinc-400"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(item.id)}
-                    className="text-sm text-red-600 hover:underline dark:text-red-400"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <Card>
+            <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
+              {sorted.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0"
+                >
+                  <div className="min-w-0 flex-1">
+                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                      {item.title}
+                    </span>
+                    <Badge className="ml-2">
+                      {item.type === "exam" ? "Exam" : "DDL"}
+                    </Badge>
+                    <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
+                      {formatDate(item.date)}
+                    </span>
+                    {item.notes && (
+                      <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                        {item.notes}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(item)}
+                      className="text-sm text-zinc-600 hover:underline dark:text-zinc-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(item.id)}
+                      className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Card>
         )}
       </div>
-    </div>
+    </PageLayout>
   );
 }
