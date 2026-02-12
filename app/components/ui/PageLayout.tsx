@@ -2,7 +2,7 @@ import * as React from "react";
 
 export interface PageLayoutProps {
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   /** Optional; default is loading message */
   loading?: boolean;
 }

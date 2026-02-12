@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Button, Card, Input, PageLayout } from "../components/ui";
 import type { WeightEntry } from "./types";
+import type { ChartData, ChartDataset } from "chart.js";
 import {
   loadEntries,
   loadGoalKg,
@@ -95,7 +96,7 @@ export default function WeightPage() {
     const byDate = sortByDateDesc(entries);
     const labels = byDate.map((e) => e.dateISO).reverse();
     const weights = byDate.map((e) => e.weightKg).reverse();
-    const datasets: { label: string; data: number[]; borderColor: string; backgroundColor: string; tension: number; fill?: boolean }[] = [
+    const datasets: { label: string; data: number[]; borderColor: string; backgroundColor: string; tension: number; fill?: boolean; borderDash?: number[]; }[] = [
       {
         label: "Weight (kg)",
         data: weights,

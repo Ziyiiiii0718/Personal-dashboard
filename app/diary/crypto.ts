@@ -8,6 +8,12 @@ const SALT_LENGTH = 16;
 const IV_LENGTH = 12;
 const KEY_LENGTH = 256;
 
+function toArrayBufferBackedU8(u8: Uint8Array) {
+  const ab = new ArrayBuffer(u8.byteLength);
+  new Uint8Array(ab).set(u8);
+  return new Uint8Array(ab);
+}
+
 function bytesToBase64(bytes: Uint8Array): string {
   let binary = "";
   for (let i = 0; i < bytes.length; i++) {
@@ -42,7 +48,9 @@ export function generateIV(): Uint8Array {
   return iv;
 }
 
+
 async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
+  const saltFixed = toArrayBufferBackedU8(salt as Uint8Array);
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
@@ -54,7 +62,7 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
   return crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
-      salt,
+      salt: saltFixed,
       iterations: PBKDF2_ITERATIONS,
       hash: "SHA-256",
     },
@@ -76,11 +84,12 @@ export async function encrypt(
 ): Promise<string> {
   const key = await deriveKey(password, salt);
   const iv = generateIV();
+  const ivFixed = toArrayBufferBackedU8(iv as Uint8Array);
   const enc = new TextEncoder();
   const ciphertext = await crypto.subtle.encrypt(
     {
       name: "AES-GCM",
-      iv,
+      iv: ivFixed,
       tagLength: 128,
     },
     key,
