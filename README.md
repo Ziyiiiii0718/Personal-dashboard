@@ -1,225 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Dashboard
 
-## Getting Started
+A minimalist, Instagram-style personal dashboard for planning and tracking day-to-day life — **todos, calendar deadlines, diet logs, fitness sessions, weight trends, and a private diary** — all in one place. Built as a modular Next.js app with type-safe data models, local persistence, and production-ready deployment.
 
-First, run the development server:
+**Live Demo:** https://personal-dashboard-two-ochre.vercel.app/  
+**Source Code:** https://github.com/Ziyiiiii0718/Personal-dashboard.git
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Highlights
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Modular multi-page app** (Next.js App Router) with a consistent layout and reusable UI components.
+- **Local-first persistence** using browser storage for fast, account-free usage.
+- **Calendar + Todo workflow** designed for daily planning and quick navigation.
+- **Diet tracking (6 meals/day)** with date grouping and ordered meal structure for completion tracking.
+- **Fitness logging** supports multiple sessions per day across detailed categories.
+- **Weight tracking** includes a trend chart and goal line for progress visualization.
+- **Private diary module** with password-gated access (client-side encryption).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# Personal Life Dashboard
-
-A private, offline-first web app for managing my daily life in one place:
-- Todo list (manual + auto-generated from upcoming deadlines)
-- Calendar (deadlines + exams combined)
-- Fitness training log
-- Weight tracking (trend chart + goal weight)
-- Diet log
-- Short-term goals
-- Recipes
-- **Password-protected encrypted diary** (cannot view without unlocking)
-
-This app is designed for **personal use**, keeping the UI simple and fast. Data is stored locally by default.
+- **Next.js (App Router)** + **TypeScript**
+- **Tailwind CSS**
+- **Chart.js** (via **react-chartjs-2**)
+- **Web Crypto API** (PBKDF2 + AES-GCM for diary encryption)
+- **Vercel** for deployment
 
 ---
 
 ## Features
 
-### ✅ Todo
-- Add / edit / complete / delete todos
-- Todos can have an optional due date
-- **Auto-add rule:** Any deadline within the next **7 days** will automatically create a todo (no duplicates)
+### Dashboard
+- Overview cards for **Todo**, **Upcoming deadlines**, **Diet Today**, **Fitness Today**, and **Weight**
+- Quick “View →” links into each module
 
-### ✅ Calendar (Deadlines + Exams)
-- One combined list with a `type` field: `ddl` or `exam`
-- Sort by date, filter by type
-- Upcoming (next 7 days) items feed into Todo automatically
+### Todo
+- Add / complete / delete tasks
+- Clean list UI designed for daily use
 
-### ✅ Fitness
-- Log workouts with: date, activity, duration, intensity, notes
+### Calendar
+- Add deadlines/events with **title**, **type**, **date**, and optional **notes**
+- Edit / delete entries
+- Upcoming items appear on the dashboard
 
-### ✅ Weight
-- Log weight entries (date + value)
-- Display a **trend line chart**
-- Set a **goal weight** and show it as a reference in the chart
+### Diet (6 meals/day)
+Supported meal types:
+- Breakfast
+- Morning Snack
+- Lunch
+- Afternoon Snack
+- Dinner
+- Late Snack
 
-### ✅ Diet
-- Log meals by date and meal type (breakfast/lunch/dinner/snack)
-- Optional notes (no forced calorie calculations)
+Features:
+- Log items + optional calories/notes
+- Entries grouped by date (newest first)
+- Within each day, meals are displayed in a fixed order for readability
 
-### ✅ Goals
-- Track short-term goals with deadline + progress + notes
-
-### ✅ Recipes
-- Save recipes with: title, ingredients, steps, tags, time
-
-### ✅ Diary (Password Locked)
-- Diary entries are **encrypted client-side**
-- You must unlock with a password to view or edit
-- Only ciphertext is stored locally (no plaintext saved)
-
----
-
-## Tech Stack (Recommended)
-- Next.js + TypeScript
-- Tailwind CSS
-- Web Crypto API for diary encryption (PBKDF2 + AES-GCM)
-- Local storage (localStorage) for persistence
-- A lightweight chart library (e.g., Chart.js) for weight trends
-
----
-
-## Project Structure (Suggested)
-src/
-app/
-page.tsx # Dashboard
-todo/
-calendar/
-fitness/
-weight/
-diet/
-goals/
-recipes/
-diary/
-settings/
-lib/
-storage/ # load/save helpers
-sync/ # deadlines -> todos sync logic
-crypto/ # diary encryption helpers
-types/
-models.ts # all TypeScript types
-
-
----
-
-## Data Model (High-Level)
-
-### DeadlineItem (DDL + Exam combined)
-- id
-- title
-- type: "ddl" | "exam"
-- dateISO (YYYY-MM-DD)
-- course (optional)
-- notes (optional)
-
-### TodoItem
-- id
-- text
-- done
-- dueDateISO (optional)
-- source: "manual" | "deadline"
-- sourceId (optional)  // deadline id if auto-generated
+### Fitness
+- Log multiple sessions per day
+- Detailed categories (e.g., strength groups + cardio types + pilates)
+- Grouped by date with optional duration/intensity/notes
 
 ### Weight
-- entries: { id, dateISO, weightKg, note? }[]
-- goalWeightKg?: number
+- Add weight entries (kg) with optional notes
+- Set a goal weight and view the delta to goal
+- Trend chart with a goal reference line
 
-### Diary (Encrypted)
-- entries: { id, dateISO, ciphertextBase64, ivBase64 }[]
-- password verifier + salt stored (not the password itself)
-
----
-
-## Auto Todo Rule (Deadlines -> Todo)
-On app load (and whenever deadlines change):
-1. Find deadlines where `dateISO` is within the next 7 days (including today).
-2. For each such deadline:
-   - If no todo exists with `source="deadline"` AND `sourceId=deadline.id`,
-     create a new todo:
-     - text: `"[DDL] " + deadline.title` (or include type)
-     - dueDateISO = deadline.dateISO
-     - source = "deadline"
-     - sourceId = deadline.id
-3. Never create duplicates.
+### Diary (Private)
+- Password-gated access
+- Diary content stored encrypted locally (not plaintext)
+- Designed to keep sensitive notes private
 
 ---
 
-## Security Note (Diary)
-This project uses client-side encryption so diary text is not stored in plaintext.
-However:
-- If someone has access to your unlocked browser session, they can read it.
-- Choose a strong password.
-- Consider making the repo Private if you ever publish it.
+## Getting Started (Local)
 
----
-
-## Getting Started
-
-### 1) Install
+### 1) Install dependencies
 ```bash
 npm install
-### 2) Run Locally
-npm run dev
-### 3) Build
-npm run build
-npm start
-
-Roadmap (Optional)
-
-Calendar month view
-
-Search / tags / filters
-
-Charts for fitness frequency
-
-IndexedDB for larger storage
-
-Optional cloud sync (future)
-
----
-
-## How to create the repo (two ways)
-
-### Option A — Create on GitHub website (recommended)
-1. Go to GitHub → click **New repository**
-2. Repository name: `personal-dashboard` (or any name)
-3. Choose **Private** (recommended because you have a diary feature)
-4. Don’t worry about folders—leave defaults (you can choose “Add a README” or not)
-5. Click **Create repository**
-
-Then you’ll push your local project to it.
-
----
-
-### Option B — Create locally first, then push (most common workflow)
-In your terminal:
+### 2) Run the dev server
 
 ```bash
-# 1) Create local folder
-mkdir personal-dashboard
-cd personal-dashboard
+npm run dev
+### 3) Production build (recommended before deploy)
 
-# 2) Start git
-git init
-
-# 3) (Later) add files, then:
-git add .
-git commit -m "Initial commit"
+```bash
+npm run build
+npm run start
 
