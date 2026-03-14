@@ -100,8 +100,8 @@ export default function WeightPage() {
       {
         label: "Weight (kg)",
         data: weights,
-        borderColor: "rgb(99 102 241)",
-        backgroundColor: "rgba(99, 102, 241, 0.1)",
+        borderColor: "rgb(228 160 168)",
+        backgroundColor: "rgba(228, 160, 168, 0.15)",
         tension: 0.2,
         fill: true,
       },
@@ -110,7 +110,7 @@ export default function WeightPage() {
       datasets.push({
         label: "Goal (kg)",
         data: labels.map(() => goalKg),
-        borderColor: "rgb(34 197 94)",
+        borderColor: "rgb(201 122 130)",
         backgroundColor: "transparent",
         tension: 0,
         borderDash: [5, 5],
@@ -128,15 +128,15 @@ export default function WeightPage() {
       <Card>
         <div className="flex flex-wrap items-end gap-6">
           <div>
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Current weight
             </span>
-            <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+            <p className="text-lg font-medium text-foreground">
               {currentKg != null ? `${currentKg} kg` : "—"}
             </p>
           </div>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Goal weight
             </span>
             <Input
@@ -152,10 +152,10 @@ export default function WeightPage() {
           </label>
           {goalDelta != null && (
             <div>
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Delta to goal
               </span>
-              <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+              <p className="text-lg font-medium text-foreground">
                 {goalDelta > 0
                   ? `${goalDelta.toFixed(1)} kg to go`
                   : goalDelta < 0
@@ -170,7 +170,7 @@ export default function WeightPage() {
       <Card>
         <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-4">
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Date
             </span>
             <Input
@@ -181,7 +181,7 @@ export default function WeightPage() {
             />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Weight (kg)
             </span>
             <Input
@@ -196,7 +196,7 @@ export default function WeightPage() {
             />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Note (optional)
             </span>
             <Input
@@ -229,38 +229,38 @@ export default function WeightPage() {
           </div>
         </Card>
       ) : (
-        <div className="flex h-48 items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-white/50 dark:border-zinc-700 dark:bg-white/5">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="flex h-48 items-center justify-center rounded-2xl border border-dashed border-border bg-surface-card">
+          <p className="text-sm text-muted">
             Add entries to see the trend chart.
           </p>
         </div>
       )}
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+        <h2 className="mb-3 text-sm font-semibold text-foreground">
           Entries
         </h2>
         {sorted.length === 0 ? (
-          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
+          <p className="rounded-2xl border border-border bg-surface-card p-6 text-center text-sm text-muted">
             No entries yet. Add one above.
           </p>
         ) : (
           <Card>
-            <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
+            <ul className="divide-y divide-divide">
               {sorted.map((entry) => (
                 <li
                   key={entry.id}
                   className="flex items-center justify-between gap-2 py-3 first:pt-0"
                 >
                   <div>
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                    <span className="font-medium text-foreground">
                       {entry.weightKg} kg
                     </span>
-                    <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
+                    <span className="ml-2 text-sm text-muted">
                       {formatDate(entry.dateISO)}
                     </span>
                     {entry.note && (
-                      <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
+                      <span className="ml-2 text-sm text-muted">
                         — {entry.note}
                       </span>
                     )}
@@ -268,7 +268,7 @@ export default function WeightPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete(entry.id)}
-                    className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                   >
                     Delete
                   </button>

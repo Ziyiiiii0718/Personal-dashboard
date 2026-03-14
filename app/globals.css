@@ -1,30 +1,80 @@
 @import "tailwindcss";
 
+/* ─── Centralized theme: soft baby pink / Korean pastel ─── */
+/* Text hierarchy: heading (darkest) → foreground (body/titles) → muted (secondary) */
 :root {
-  --background: #f7f6f4;
-  --foreground: #3f3f46;
-  --muted: #71717a;
-  --border: rgba(0, 0, 0, 0.06);
-  --link: #52525b;
-  --link-hover: #18181b;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background: #fef5f6;
+  --heading: #2d2527;
+  --foreground: #3d3235;
+  --muted: #5c5053;
+  --border: #e2c4c8;
+  --surface: #ffffff;
+  --surface-card: #ffffff;
+  --primary: #e4a0a8;
+  --primary-hover: #dd8f98;
+  --primary-foreground: #ffffff;
+  --input-border: #e2c4c8;
+  --focus-ring: #e4a0a8;
+  --sidebar-bg: #fdf2f4;
+  --sidebar-border: #e2c4c8;
+  --sidebar-active: #f8e4e7;
+  --danger: #b86a72;
+  --divide: #e2c4c8;
+  --link: #4a3f42;
+  --link-hover: #2d2527;
+  --shadow-soft: 0 2px 12px rgba(228, 160, 168, 0.08);
+  --radius: 1rem;
+  --radius-lg: 1.25rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #09090b;
-    --foreground: #fafafa;
-    --muted: #a1a1aa;
-    --border: rgba(255, 255, 255, 0.08);
-    --link: #a1a1aa;
-    --link-hover: #fafafa;
+    --background: #2a1f21;
+    --heading: #f5e6e8;
+    --foreground: #e8d8da;
+    --muted: #b8a4a8;
+    --border: #5a4548;
+    --surface: #352a2d;
+    --surface-card: rgba(53, 42, 45, 0.9);
+    --primary: #e4a0a8;
+    --primary-hover: #eab0b7;
+    --primary-foreground: #2a1f21;
+    --input-border: #5a4548;
+    --focus-ring: #e4a0a8;
+    --sidebar-bg: #2a1f21;
+    --sidebar-border: #5a4548;
+    --sidebar-active: #3d2f32;
+    --danger: #e08a92;
+    --divide: #5a4548;
+    --link: #d4c4c8;
+    --link-hover: #f5e6e8;
+    --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.2);
   }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-heading: var(--heading);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-surface: var(--surface);
+  --color-surface-card: var(--surface-card);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-input-border: var(--input-border);
+  --color-focus-ring: var(--focus-ring);
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-danger: var(--danger);
+  --color-divide: var(--divide);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --shadow-soft: var(--shadow-soft);
+  --radius-card: var(--radius-lg);
 }
 
 body {
@@ -35,13 +85,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Airier typography and spacing */
 h1, h2, h3 {
   line-height: 1.3;
   letter-spacing: -0.02em;
 }
 
-/* Consistent link styles */
 a {
   color: var(--link);
   transition: color 0.15s ease;
@@ -50,17 +98,15 @@ a:hover {
   color: var(--link-hover);
 }
 
-/* Focus visible for accessibility */
 :focus-visible {
-  outline: 2px solid var(--foreground);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
-/* Optional: soften focus ring for form controls (keep visible) */
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--foreground);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }

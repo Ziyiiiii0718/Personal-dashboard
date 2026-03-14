@@ -270,7 +270,7 @@ export default function DiaryPage() {
     return (
       <PageLayout title="Diary">
         <Card>
-          <p className="text-zinc-500 dark:text-zinc-400">Loading…</p>
+          <p className="text-muted">Loading…</p>
         </Card>
       </PageLayout>
     );
@@ -280,13 +280,13 @@ export default function DiaryPage() {
     return (
       <PageLayout title="Diary">
         <Card>
-          <h2 className="mb-3 text-base font-semibold text-zinc-800 dark:text-zinc-200">
+          <h2 className="mb-3 text-base font-semibold text-foreground">
             {vaultExists ? "Change password" : "Set password"}
           </h2>
           <form onSubmit={handleSetPassword} className="space-y-4">
             {vaultExists && (
               <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                <span className="text-xs font-medium text-muted">
                   Current password
                 </span>
                 <Input
@@ -299,7 +299,7 @@ export default function DiaryPage() {
               </label>
             )}
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 {vaultExists ? "New password" : "Password"}
               </span>
               <Input
@@ -312,7 +312,7 @@ export default function DiaryPage() {
               />
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Confirm password
               </span>
               <Input
@@ -324,7 +324,7 @@ export default function DiaryPage() {
               />
             </label>
             {setPwdError && (
-              <p className="text-sm text-red-600 dark:text-red-400">{setPwdError}</p>
+              <p className="text-sm text-danger">{setPwdError}</p>
             )}
             <div className="flex gap-2">
               <Button type="submit">
@@ -352,12 +352,12 @@ export default function DiaryPage() {
     return (
       <PageLayout title="Diary">
         <Card>
-          <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mb-4 text-sm text-muted">
             Your diary is encrypted. Enter your password to unlock.
           </p>
           <form onSubmit={handleUnlock} className="space-y-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Password
               </span>
               <Input
@@ -369,7 +369,7 @@ export default function DiaryPage() {
               />
             </label>
             {unlockError && (
-              <p className="text-sm text-red-600 dark:text-red-400">{unlockError}</p>
+              <p className="text-sm text-danger">{unlockError}</p>
             )}
             <div className="flex flex-wrap gap-2">
               <Button type="submit">Unlock</Button>
@@ -399,7 +399,7 @@ export default function DiaryPage() {
     <PageLayout title="Diary">
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm text-muted">
             Unlocked · Auto-lock after 10 min inactivity
           </p>
           <div className="flex flex-wrap gap-2">
@@ -424,10 +424,10 @@ export default function DiaryPage() {
 
       {importConfirm && (
         <Card>
-          <h2 className="mb-2 text-base font-semibold text-zinc-800 dark:text-zinc-200">
+          <h2 className="mb-2 text-base font-semibold text-foreground">
             Import backup
           </h2>
-          <p className="mb-3 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mb-3 text-sm text-muted">
             This will replace all current diary data. Unlock with your existing diary
             password after import.
           </p>
@@ -455,13 +455,13 @@ export default function DiaryPage() {
             </Button>
           </div>
           {importError && (
-            <p className="mt-2 text-sm text-red-600 dark:text-red-400">{importError}</p>
+            <p className="mt-2 text-sm text-danger">{importError}</p>
           )}
         </Card>
       )}
 
       <Card>
-        <h2 className="mb-3 text-base font-semibold text-zinc-800 dark:text-zinc-200">
+        <h2 className="mb-3 text-base font-semibold text-foreground">
           {editingId ? "Edit entry" : "New entry"}
         </h2>
         <form
@@ -469,7 +469,7 @@ export default function DiaryPage() {
           className="space-y-4"
         >
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Date
             </span>
             <Input
@@ -479,7 +479,7 @@ export default function DiaryPage() {
             />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Title (optional)
             </span>
             <Input
@@ -490,7 +490,7 @@ export default function DiaryPage() {
             />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Content
             </span>
             <Textarea
@@ -524,11 +524,11 @@ export default function DiaryPage() {
       </Card>
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+        <h2 className="mb-3 text-sm font-semibold text-foreground">
           Entries
         </h2>
         {sortedEntries.length === 0 ? (
-          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
+          <p className="rounded-2xl border border-border bg-surface-card p-6 text-center text-sm text-muted">
             No entries yet. Add one above.
           </p>
         ) : (
@@ -539,14 +539,14 @@ export default function DiaryPage() {
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                        <span className="text-sm font-medium text-foreground">
                           {entry.title || "Untitled"}
                         </span>
-                        <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                        <span className="text-sm text-muted">
                           {formatDate(entry.dateISO)}
                         </span>
                       </div>
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-600 dark:text-zinc-400">
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-muted">
                         {entry.content}
                       </p>
                     </div>
@@ -561,7 +561,7 @@ export default function DiaryPage() {
                       <button
                         type="button"
                         onClick={() => handleDelete(entry.id)}
-                        className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                       >
                         Delete
                       </button>

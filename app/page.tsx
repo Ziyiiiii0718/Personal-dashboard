@@ -40,25 +40,25 @@ function DashboardCard({
     <Card
       header={
         <>
-          <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-200">
+          <h2 className="text-base font-semibold text-heading">
             {emoji} {title}
           </h2>
           <Link
             href={href}
-            className="text-xs font-medium text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:rounded"
+            className="text-xs font-medium text-link hover:text-link-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:rounded focus-visible:outline-focus-ring"
           >
             View →
           </Link>
         </>
       }
     >
-      <div className="text-sm text-zinc-600 dark:text-zinc-400">
+      <div className="text-sm text-muted">
         {children}
       </div>
       {emptyHref != null && (
         <Link
           href={emptyHref}
-          className="mt-3 inline-block rounded-full border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="mt-3 inline-block rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-sidebar-active focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
         >
           Add
         </Link>
@@ -77,10 +77,10 @@ export default function DashboardPage() {
   if (data == null) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <h1 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+        <h1 className="mb-6 text-2xl font-semibold tracking-tight text-heading sm:text-3xl">
           Dashboard
         </h1>
-        <p className="text-zinc-500 dark:text-zinc-400">Loading…</p>
+        <p className="text-muted">Loading…</p>
       </div>
     );
   }
@@ -89,7 +89,7 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <h1 className="mb-8 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+        <h1 className="mb-8 text-2xl font-semibold tracking-tight text-heading sm:text-3xl">
           Dashboard
         </h1>
 
@@ -103,16 +103,16 @@ export default function DashboardPage() {
               emptyHref={todos.total === 0 ? "/todo" : undefined}
             >
               {todos.total === 0 ? (
-                <p className="text-zinc-500 dark:text-zinc-400">
+                <p className="text-muted">
                   Nothing on your list yet.
                 </p>
               ) : (
                 <>
                   <p className="mb-3">
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                    <span className="font-medium text-foreground">
                       {todos.remaining}
                     </span>
-                    <span className="text-zinc-500 dark:text-zinc-400">
+                    <span className="text-muted">
                       {" "}
                       remaining / {todos.total} total
                     </span>
@@ -120,13 +120,13 @@ export default function DashboardPage() {
                   {todos.preview.length > 0 ? (
                     <ul className="space-y-1.5">
                       {todos.preview.map((t) => (
-                        <li key={t.id} className="truncate text-zinc-700 dark:text-zinc-300">
+                        <li key={t.id} className="truncate text-foreground">
                           {t.text}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-zinc-500 dark:text-zinc-400">
+                    <p className="text-muted">
                       All done for now.
                     </p>
                   )}
@@ -141,20 +141,20 @@ export default function DashboardPage() {
               emptyHref={deadlines.upcoming.length === 0 ? "/calendar" : undefined}
             >
               {deadlines.upcoming.length === 0 ? (
-                <p className="text-zinc-500 dark:text-zinc-400">
+                <p className="text-muted">
                   No deadlines in the next 7 days.
                 </p>
               ) : (
                 <ul className="space-y-2">
                   {deadlines.upcoming.map((d) => (
                     <li key={d.id} className="flex flex-wrap items-center gap-1.5">
-                      <span className="text-zinc-900 dark:text-zinc-100">
+                      <span className="text-foreground">
                         {d.title}
                       </span>
-                      <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400">
+                      <span className="rounded-full bg-sidebar-active px-2 py-0.5 text-xs text-muted">
                         {d.type === "exam" ? "Exam" : "DDL"}
                       </span>
-                      <span className="text-zinc-500 dark:text-zinc-400">
+                      <span className="text-muted">
                         {formatDeadlineDate(d.date)}
                       </span>
                     </li>
@@ -173,22 +173,22 @@ export default function DashboardPage() {
               emptyHref={weight.latest == null ? "/weight" : undefined}
             >
               {weight.latest == null ? (
-                <p className="text-zinc-500 dark:text-zinc-400">
+                <p className="text-muted">
                   Log your first weight to track progress.
                 </p>
               ) : (
                 <>
                   <p>
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                    <span className="font-medium text-foreground">
                       {weight.latest} kg
                     </span>
-                    <span className="text-zinc-500 dark:text-zinc-400">
+                    <span className="text-muted">
                       {" "}
                       latest
                     </span>
                   </p>
                   {weight.goal != null && (
-                    <p className="mt-1 text-zinc-500 dark:text-zinc-400">
+                    <p className="mt-1 text-muted">
                       Goal {weight.goal} kg
                       {weight.delta != null && (
                         <>
@@ -209,26 +209,26 @@ export default function DashboardPage() {
               emptyHref={diet.mealsLogged === 0 ? "/diet" : undefined}
             >
               <p className="mb-1">
-                <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                <span className="font-medium text-foreground">
                   {diet.mealsLogged}
                 </span>
-                <span className="text-zinc-500 dark:text-zinc-400">
+                <span className="text-muted">
                   {" "}
                   / 6 meals logged
                 </span>
               </p>
               {diet.totalCal > 0 && (
-                <p className="text-zinc-500 dark:text-zinc-400">
+                <p className="text-muted">
                   {diet.totalCal} cal total
                 </p>
               )}
               {diet.missingMealTypes.length > 0 && diet.missingMealTypes.length < 6 && (
-                <p className="mt-1.5 text-zinc-500 dark:text-zinc-400">
+                <p className="mt-1.5 text-muted">
                   Missing: {formatMissingMeals(diet.missingMealTypes)}
                 </p>
               )}
               {diet.mealsLogged === 0 && (
-                <p className="text-zinc-500 dark:text-zinc-400">
+                <p className="text-muted">
                   Log your first meal of the day.
                 </p>
               )}
@@ -241,28 +241,28 @@ export default function DashboardPage() {
               emptyHref={fitness.sessions === 0 ? "/fitness" : undefined}
             >
               {fitness.sessions === 0 ? (
-                <p className="text-zinc-500 dark:text-zinc-400">
+                <p className="text-muted">
                   Log a workout to start the day.
                 </p>
               ) : (
                 <>
                   <p>
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                    <span className="font-medium text-foreground">
                       {fitness.sessions}
                     </span>
-                    <span className="text-zinc-500 dark:text-zinc-400">
+                    <span className="text-muted">
                       {" "}
                       sessions
                     </span>
                     {fitness.durationMin > 0 && (
-                      <span className="text-zinc-500 dark:text-zinc-400">
+                      <span className="text-muted">
                         {" "}
                         · {fitness.durationMin} min total
                       </span>
                     )}
                   </p>
                   {fitness.categories.length > 0 && (
-                    <p className="mt-1 text-zinc-500 dark:text-zinc-400">
+                    <p className="mt-1 text-muted">
                       {fitness.categories.join(", ")}
                     </p>
                   )}

@@ -118,18 +118,18 @@ export default function FitnessPage() {
       <Card>
         <div className="flex flex-wrap gap-6">
           <div>
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Today&apos;s sessions
             </span>
-            <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+            <p className="text-lg font-medium text-foreground">
               {todaySessions}
             </p>
           </div>
           <div>
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Total duration today
             </span>
-            <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+            <p className="text-lg font-medium text-foreground">
               {todayDuration > 0 ? `${todayDuration} min` : "—"}
             </p>
           </div>
@@ -140,11 +140,11 @@ export default function FitnessPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-wrap gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Date</span>
+              <span className="text-xs font-medium text-muted">Date</span>
               <Input type="date" value={dateISO} onChange={(e) => setDateISO(e.target.value)} />
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Category</span>
+              <span className="text-xs font-medium text-muted">Category</span>
               <Select value={category} onChange={(e) => setCategory(e.target.value as WorkoutCategory)} className="w-40">
                 {WORKOUT_CATEGORIES.map((c) => (
                   <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
@@ -153,7 +153,7 @@ export default function FitnessPage() {
             </label>
           </div>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Title</span>
+            <span className="text-xs font-medium text-muted">Title</span>
             <Input
               type="text"
               value={title}
@@ -164,7 +164,7 @@ export default function FitnessPage() {
           </label>
           <div className="flex flex-wrap gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Duration (min, optional)</span>
+              <span className="text-xs font-medium text-muted">Duration (min, optional)</span>
               <Input
                 type="number"
                 step={1}
@@ -176,7 +176,7 @@ export default function FitnessPage() {
               />
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Intensity (optional)</span>
+              <span className="text-xs font-medium text-muted">Intensity (optional)</span>
               <Select value={intensity} onChange={(e) => setIntensity(e.target.value as Intensity | "")} className="w-32">
                 <option value="">—</option>
                 <option value="low">Low</option>
@@ -186,7 +186,7 @@ export default function FitnessPage() {
             </label>
           </div>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Notes (optional)</span>
+            <span className="text-xs font-medium text-muted">Notes (optional)</span>
             <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional notes" rows={2} />
           </label>
           <Button type="submit">Add entry</Button>
@@ -195,7 +195,7 @@ export default function FitnessPage() {
 
       <div className="flex flex-wrap items-center gap-4">
         <label className="flex items-center gap-2">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Category</span>
+          <span className="text-xs font-medium text-muted">Category</span>
           <Select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value as WorkoutCategory | "all")}
@@ -208,7 +208,7 @@ export default function FitnessPage() {
           </Select>
         </label>
         <label className="flex flex-1 min-w-[180px] items-center gap-2">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Search</span>
+          <span className="text-xs font-medium text-muted">Search</span>
           <Input
             type="text"
             value={search}
@@ -221,7 +221,7 @@ export default function FitnessPage() {
 
       <div>
         {grouped.length === 0 ? (
-          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
+          <p className="rounded-2xl border border-border bg-surface-card p-6 text-center text-sm text-muted">
             {entries.length === 0
               ? "No workout entries yet. Add one above."
               : "No entries match the current filters."}
@@ -230,11 +230,11 @@ export default function FitnessPage() {
           <ul className="space-y-6">
             {grouped.map(({ date, entries: dayEntries }) => (
               <li key={date}>
-                <h2 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                <h2 className="mb-2 text-sm font-semibold text-foreground">
                   {formatDate(date)}
                 </h2>
                 <Card>
-                  <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
+                  <ul className="divide-y divide-divide">
                     {dayEntries.map((entry) => (
                       <li
                         key={entry.id}
@@ -242,23 +242,23 @@ export default function FitnessPage() {
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                            <span className="font-medium text-foreground">
                               {entry.title}
                             </span>
                             <Badge>{CATEGORY_LABELS[entry.category]}</Badge>
                             {entry.durationMin != null && (
-                              <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                              <span className="text-sm text-muted">
                                 {entry.durationMin} min
                               </span>
                             )}
                             {entry.intensity && (
-                              <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                              <span className="text-sm text-muted">
                                 {INTENSITY_LABELS[entry.intensity]}
                               </span>
                             )}
                           </div>
                           {entry.notes && (
-                            <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="mt-0.5 text-sm text-muted">
                               {entry.notes}
                             </p>
                           )}
@@ -266,7 +266,7 @@ export default function FitnessPage() {
                         <button
                           type="button"
                           onClick={() => handleDelete(entry.id)}
-                          className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                          className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                         >
                           Delete
                         </button>

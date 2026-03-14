@@ -103,11 +103,11 @@ export default function DietPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-wrap gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Date</span>
+              <span className="text-xs font-medium text-muted">Date</span>
               <Input type="date" value={dateISO} onChange={(e) => setDateISO(e.target.value)} />
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Meal</span>
+              <span className="text-xs font-medium text-muted">Meal</span>
               <Select value={mealType} onChange={(e) => setMealType(e.target.value as MealType)} className="w-40">
                 {MEAL_TYPES.map((t) => (
                   <option key={t} value={t}>{MEAL_LABELS[t]}</option>
@@ -116,7 +116,7 @@ export default function DietPage() {
             </label>
           </div>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Items</span>
+            <span className="text-xs font-medium text-muted">Items</span>
             <Textarea
               value={itemsText}
               onChange={(e) => setItemsText(e.target.value)}
@@ -127,7 +127,7 @@ export default function DietPage() {
           </label>
           <div className="flex flex-wrap gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Calories (optional)</span>
+              <span className="text-xs font-medium text-muted">Calories (optional)</span>
               <Input
                 type="number"
                 step={1}
@@ -139,7 +139,7 @@ export default function DietPage() {
               />
             </label>
             <label className="flex flex-1 min-w-[200px] flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Note (optional)</span>
+              <span className="text-xs font-medium text-muted">Note (optional)</span>
               <Input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional" />
             </label>
           </div>
@@ -149,7 +149,7 @@ export default function DietPage() {
 
       <div className="flex flex-wrap items-center gap-4">
         <label className="flex items-center gap-2">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Meal</span>
+          <span className="text-xs font-medium text-muted">Meal</span>
           <Select
             value={filterMeal}
             onChange={(e) => setFilterMeal(e.target.value as MealType | "all")}
@@ -162,7 +162,7 @@ export default function DietPage() {
           </Select>
         </label>
         <label className="flex flex-1 min-w-[180px] items-center gap-2">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Search items</span>
+          <span className="text-xs font-medium text-muted">Search items</span>
           <Input
             type="text"
             value={search}
@@ -175,30 +175,30 @@ export default function DietPage() {
 
       <div>
         {grouped.length === 0 ? (
-          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
+          <p className="rounded-2xl border border-border bg-surface-card p-6 text-center text-sm text-muted">
             {entries.length === 0 ? "No entries yet. Add one above." : "No entries match the current filters."}
           </p>
         ) : (
           <ul className="space-y-6">
             {grouped.map(({ date, entries: dayEntries }) => (
               <li key={date}>
-                <h2 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                <h2 className="mb-2 text-sm font-semibold text-foreground">
                   {formatDate(date)}
                 </h2>
                 <Card>
-                  <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
+                  <ul className="divide-y divide-divide">
                     {dayEntries.map((entry) => (
                       <li
                         key={entry.id}
                         className="flex flex-wrap items-start justify-between gap-2 py-3 first:pt-0"
                       >
                         <div className="min-w-0 flex-1">
-                          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                          <span className="text-xs font-medium text-muted">
                             {MEAL_LABELS[entry.mealType]}
                           </span>
-                          <p className="text-zinc-900 dark:text-zinc-100">{entry.itemsText}</p>
+                          <p className="text-foreground">{entry.itemsText}</p>
                           {(entry.calories != null || entry.note) && (
-                            <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="mt-0.5 text-sm text-muted">
                               {entry.calories != null && <span>{entry.calories} cal</span>}
                               {entry.calories != null && entry.note && " · "}
                               {entry.note}
@@ -208,7 +208,7 @@ export default function DietPage() {
                         <button
                           type="button"
                           onClick={() => handleDelete(entry.id)}
-                          className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                          className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                         >
                           Delete
                         </button>

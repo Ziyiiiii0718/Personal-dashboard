@@ -4,7 +4,7 @@ export default function SettingsPage() {
   return (
     <PageLayout title="Settings">
       <Card>
-        <p className="text-zinc-600 dark:text-zinc-400">
+        <p className="text-muted">
           App preferences and account settings will be managed here.
         </p>
       </Card>

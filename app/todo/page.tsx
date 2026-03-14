@@ -75,7 +75,7 @@ export default function TodoPage() {
       <Card>
         <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-4">
           <label className="flex flex-1 min-w-[200px] flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               New task
             </span>
             <Input
@@ -90,16 +90,16 @@ export default function TodoPage() {
       </Card>
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+        <h2 className="mb-3 text-sm font-semibold text-foreground">
           List
         </h2>
         {items.length === 0 ? (
-          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
+          <p className="rounded-2xl border border-border bg-surface-card p-6 text-center text-sm text-muted">
             No todos. Add one above or add deadlines on Calendar (they sync here within 7 days).
           </p>
         ) : (
           <Card>
-            <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
+            <ul className="divide-y divide-divide">
               {items.map((item) => (
                 <li
                   key={item.id}
@@ -109,20 +109,20 @@ export default function TodoPage() {
                     type="checkbox"
                     checked={item.done}
                     onChange={() => toggleDone(item.id)}
-                    className="mt-1 h-4 w-4 rounded border-zinc-300 dark:border-zinc-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className="mt-1 h-4 w-4 rounded border-input-border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                   />
                   <div className="min-w-0 flex-1">
                     <span
                       className={
                         item.done
-                          ? "text-zinc-500 line-through dark:text-zinc-400"
-                          : "text-zinc-900 dark:text-zinc-100"
+                          ? "text-muted line-through"
+                          : "text-foreground"
                       }
                     >
                       {item.text}
                     </span>
                     {item.dueDateISO && (
-                      <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
+                      <span className="ml-2 text-sm text-muted">
                         {formatDue(item.dueDateISO)}
                       </span>
                     )}
@@ -130,7 +130,7 @@ export default function TodoPage() {
                       <Badge
                         className={
                           item.source === "deadline"
-                            ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200"
+                            ? "bg-sidebar-active text-foreground"
                             : ""
                         }
                       >
@@ -141,7 +141,7 @@ export default function TodoPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete(item.id)}
-                    className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                   >
                     Delete
                   </button>

@@ -123,12 +123,12 @@ export default function GoalsPage() {
   return (
     <PageLayout title="Goals">
       <Card>
-        <h2 className="mb-4 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+        <h2 className="mb-4 text-sm font-semibold text-foreground">
           Add Goal
         </h2>
         <form onSubmit={handleAdd} className="flex flex-col gap-4">
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Title
             </span>
             <Input
@@ -140,7 +140,7 @@ export default function GoalsPage() {
           </label>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Category
               </span>
               <Select
@@ -160,7 +160,7 @@ export default function GoalsPage() {
               </Select>
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Target (optional)
               </span>
               <Input
@@ -175,7 +175,7 @@ export default function GoalsPage() {
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Unit (optional)
               </span>
               <Input
@@ -186,7 +186,7 @@ export default function GoalsPage() {
               />
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Deadline (optional)
               </span>
               <Input
@@ -198,7 +198,7 @@ export default function GoalsPage() {
             </label>
           </div>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-medium text-muted">
               Note (optional)
             </span>
             <Textarea
@@ -213,12 +213,12 @@ export default function GoalsPage() {
       </Card>
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+        <h2 className="mb-3 text-sm font-semibold text-foreground">
           Your goals
         </h2>
         {sorted.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-white/50 py-12 dark:border-zinc-700 dark:bg-white/5">
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface-card py-12">
+            <p className="text-sm text-muted">
               No goals yet. Add one above to get started.
             </p>
           </div>
@@ -230,7 +230,7 @@ export default function GoalsPage() {
                   {editingId === goal.id ? (
                     <div className="flex flex-col gap-3">
                       <label className="flex flex-col gap-1.5">
-                        <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                        <span className="text-xs font-medium text-muted">
                           Title
                         </span>
                         <Input
@@ -243,7 +243,7 @@ export default function GoalsPage() {
                       </label>
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <label className="flex flex-col gap-1.5">
-                          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                          <span className="text-xs font-medium text-muted">
                             Category
                           </span>
                           <Select
@@ -263,7 +263,7 @@ export default function GoalsPage() {
                           </Select>
                         </label>
                         <label className="flex flex-col gap-1.5">
-                          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                          <span className="text-xs font-medium text-muted">
                             Target
                           </span>
                           <Input
@@ -280,7 +280,7 @@ export default function GoalsPage() {
                       </div>
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <label className="flex flex-col gap-1.5">
-                          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                          <span className="text-xs font-medium text-muted">
                             Unit
                           </span>
                           <Input
@@ -293,7 +293,7 @@ export default function GoalsPage() {
                           />
                         </label>
                         <label className="flex flex-col gap-1.5">
-                          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                          <span className="text-xs font-medium text-muted">
                             Deadline
                           </span>
                           <Input
@@ -307,7 +307,7 @@ export default function GoalsPage() {
                         </label>
                       </div>
                       <label className="flex flex-col gap-1.5">
-                        <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                        <span className="text-xs font-medium text-muted">
                           Note
                         </span>
                         <Textarea
@@ -335,10 +335,10 @@ export default function GoalsPage() {
                   ) : (
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                        <p className="font-medium text-foreground">
                           {goal.title}
                         </p>
-                        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                        <p className="mt-0.5 text-xs text-muted">
                           {categoryLabel(goal.category)}
                           {goal.target != null && (
                             <>
@@ -356,7 +356,7 @@ export default function GoalsPage() {
                           )}
                         </p>
                         {goal.note && (
-                          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                          <p className="mt-1 text-sm text-muted">
                             {goal.note}
                           </p>
                         )}
@@ -372,7 +372,7 @@ export default function GoalsPage() {
                         <button
                           type="button"
                           onClick={() => handleDelete(goal.id)}
-                          className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                          className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                         >
                           Delete
                         </button>

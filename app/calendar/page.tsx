@@ -103,7 +103,7 @@ export default function CalendarPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-wrap gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Title
               </span>
               <Input
@@ -116,7 +116,7 @@ export default function CalendarPage() {
               />
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Type
               </span>
               <Select
@@ -129,7 +129,7 @@ export default function CalendarPage() {
               </Select>
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Date
               </span>
               <Input
@@ -140,7 +140,7 @@ export default function CalendarPage() {
               />
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs font-medium text-muted">
                 Notes (optional)
               </span>
               <Input
@@ -164,33 +164,33 @@ export default function CalendarPage() {
       </Card>
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+        <h2 className="mb-3 text-sm font-semibold text-foreground">
           Deadlines
         </h2>
         {sorted.length === 0 ? (
-          <p className="rounded-2xl border border-black/5 bg-white/80 p-6 text-center text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
+          <p className="rounded-2xl border border-border bg-surface-card p-6 text-center text-sm text-muted">
             No deadlines yet. Add one above.
           </p>
         ) : (
           <Card>
-            <ul className="divide-y divide-zinc-200 dark:divide-zinc-700">
+            <ul className="divide-y divide-divide">
               {sorted.map((item) => (
                 <li
                   key={item.id}
                   className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0"
                 >
                   <div className="min-w-0 flex-1">
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                    <span className="font-medium text-foreground">
                       {item.title}
                     </span>
                     <Badge className="ml-2">
                       {item.type === "exam" ? "Exam" : "DDL"}
                     </Badge>
-                    <span className="ml-2 text-sm text-zinc-500 dark:text-zinc-400">
+                    <span className="ml-2 text-sm text-muted">
                       {formatDate(item.date)}
                     </span>
                     {item.notes && (
-                      <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-0.5 text-sm text-muted">
                         {item.notes}
                       </p>
                     )}
@@ -199,14 +199,14 @@ export default function CalendarPage() {
                     <button
                       type="button"
                       onClick={() => handleEdit(item)}
-                      className="text-sm text-zinc-600 hover:underline dark:text-zinc-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="text-sm text-muted hover:underline hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                     >
                       Edit
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDelete(item.id)}
-                      className="text-sm text-red-600 hover:underline dark:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                     >
                       Delete
                     </button>
