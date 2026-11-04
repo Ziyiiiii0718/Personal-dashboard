@@ -7,6 +7,10 @@ function isMealType(x: string): x is MealType {
   return (MEAL_TYPES as readonly string[]).includes(x);
 }
 
+function isOptionalNumber(x: unknown): boolean {
+  return x === undefined || typeof x === "number";
+}
+
 export function loadEntries(): DietEntry[] {
   if (typeof window === "undefined") return [];
   try {
@@ -23,8 +27,12 @@ export function loadEntries(): DietEntry[] {
         isMealType(x.mealType) &&
         typeof x.itemsText === "string" &&
         typeof x.createdAt === "string" &&
-        (x.calories === undefined || typeof x.calories === "number") &&
-        (x.note === undefined || typeof x.note === "string")
+        isOptionalNumber(x.calories) &&
+        isOptionalNumber(x.protein) &&
+        isOptionalNumber(x.carbs) &&
+        isOptionalNumber(x.fat) &&
+        (x.note === undefined || typeof x.note === "string") &&
+        (x.aiGenerated === undefined || typeof x.aiGenerated === "boolean")
     );
   } catch {
     return [];

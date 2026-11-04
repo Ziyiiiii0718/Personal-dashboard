@@ -219,7 +219,9 @@ export default function DashboardPage() {
               </p>
               {diet.totalCal > 0 && (
                 <p className="text-muted">
-                  {diet.totalCal} cal total
+                  {diet.totalCal} cal
+                  {diet.totalProtein > 0 && <> · {diet.totalProtein}g protein</>}
+                  {" "}total
                 </p>
               )}
               {diet.missingMealTypes.length > 0 && diet.missingMealTypes.length < 6 && (

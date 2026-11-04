@@ -55,6 +55,7 @@ export function getDashboardData() {
   const dietToday = dietEntries.filter((e) => e.dateISO === today);
   const dietMealsLogged = new Set(dietToday.map((e) => e.mealType));
   const dietTotalCal = dietToday.reduce((s, e) => s + (e.calories ?? 0), 0);
+  const dietTotalProtein = dietToday.reduce((s, e) => s + (e.protein ?? 0), 0);
   const missingMealTypes = (Object.keys(MEAL_LABELS) as MealType[]).filter(
     (m) => !dietMealsLogged.has(m)
   );
@@ -86,6 +87,7 @@ export function getDashboardData() {
     diet: {
       mealsLogged: dietMealsLogged.size,
       totalCal: dietTotalCal,
+      totalProtein: Math.round(dietTotalProtein * 10) / 10,
       missingMealTypes: missingMealTypes.map((m) => MEAL_LABELS[m]),
     },
     fitness: {

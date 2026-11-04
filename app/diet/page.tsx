@@ -1,10 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card, Input, PageLayout, Select, Textarea } from "../components/ui";
-import type { DietEntry, MealType } from "./types";
+import {
+  Badge,
+  Button,
+  Card,
+  Input,
+  PageLayout,
+  Select,
+  Textarea,
+} from "../components/ui";
+import type { CookingHabits, DietEntry, FoodItem, MealType } from "./types";
 import { MEAL_LABELS, MEAL_ORDER, MEAL_TYPES } from "./types";
 import { loadEntries, saveEntries } from "./storage";
+import { loadFoodLibrary, saveFoodLibrary } from "./foodLibrary";
+import { loadHabits, saveHabits } from "./habits";
+import { AiMealLogger } from "./AiMealLogger";
+import { FoodLibraryPanel } from "./FoodLibraryPanel";
+import { CookingHabitsPanel } from "./CookingHabitsPanel";
 
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
@@ -20,7 +33,20 @@ function formatDate(dateISO: string): string {
   });
 }
 
-function groupByDateSorted(entries: DietEntry[]): { date: string; entries: DietEntry[] }[] {
+function macroLine(entry: DietEntry): string {
+  return [
+    entry.calories != null ? `${entry.calories} cal` : null,
+    entry.protein != null ? `${entry.protein}P` : null,
+    entry.carbs != null ? `${entry.carbs}C` : null,
+    entry.fat != null ? `${entry.fat}F` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+function groupByDateSorted(
+  entries: DietEntry[]
+): { date: string; entries: DietEntry[] }[] {
   const byDate = new Map<string, DietEntry[]>();
   for (const e of entries) {
     const list = byDate.get(e.dateISO) ?? [];
@@ -39,7 +65,13 @@ function groupByDateSorted(entries: DietEntry[]): { date: string; entries: DietE
 
 export default function DietPage() {
   const [entries, setEntries] = useState<DietEntry[]>([]);
+  const [foodLibrary, setFoodLibrary] = useState<FoodItem[]>([]);
+  const [habits, setHabitsState] = useState<CookingHabits>({
+    text: "",
+    updatedAt: "",
+  });
   const [mounted, setMounted] = useState(false);
+
   const [dateISO, setDateISO] = useState(todayISO());
   const [mealType, setMealType] = useState<MealType>("breakfast");
   const [itemsText, setItemsText] = useState("");
@@ -50,6 +82,8 @@ export default function DietPage() {
 
   useEffect(() => {
     setEntries(loadEntries());
+    setFoodLibrary(loadFoodLibrary());
+    setHabitsState(loadHabits());
     setMounted(true);
   }, []);
 
@@ -57,6 +91,28 @@ export default function DietPage() {
     setEntries(next);
     saveEntries(next);
   }, []);
+
+  const persistLibrary = useCallback((next: FoodItem[]) => {
+    setFoodLibrary(next);
+    saveFoodLibrary(next);
+  }, []);
+
+  const persistHabits = useCallback((text: string) => {
+    const next: CookingHabits = { text, updatedAt: new Date().toISOString() };
+    setHabitsState(next);
+    saveHabits(next);
+  }, []);
+
+  const handleAiSaved = useCallback(
+    (entry: DietEntry) => {
+      setEntries((prev) => {
+        const next = [...prev, entry];
+        saveEntries(next);
+        return next;
+      });
+    },
+    []
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,7 +143,10 @@ export default function DietPage() {
 
   const filtered = entries.filter((e) => {
     if (filterMeal !== "all" && e.mealType !== filterMeal) return false;
-    if (search.trim() && !e.itemsText.toLowerCase().includes(search.trim().toLowerCase()))
+    if (
+      search.trim() &&
+      !e.itemsText.toLowerCase().includes(search.trim().toLowerCase())
+    )
       return false;
     return true;
   });
@@ -99,22 +158,63 @@ export default function DietPage() {
 
   return (
     <PageLayout title="Diet">
-      <Card>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex flex-wrap gap-4">
-            <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-muted">Date</span>
-              <Input type="date" value={dateISO} onChange={(e) => setDateISO(e.target.value)} />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-muted">Meal</span>
-              <Select value={mealType} onChange={(e) => setMealType(e.target.value as MealType)} className="w-40">
-                {MEAL_TYPES.map((t) => (
-                  <option key={t} value={t}>{MEAL_LABELS[t]}</option>
-                ))}
-              </Select>
-            </label>
+      <AiMealLogger
+        dateISO={dateISO}
+        mealType={mealType}
+        foodLibrary={foodLibrary}
+        habits={habits.text}
+        onSaved={handleAiSaved}
+      />
+
+      <div className="flex flex-wrap gap-4">
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-muted">Date</span>
+          <Input
+            type="date"
+            value={dateISO}
+            onChange={(e) => setDateISO(e.target.value)}
+          />
+        </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-muted">Meal</span>
+          <Select
+            value={mealType}
+            onChange={(e) => setMealType(e.target.value as MealType)}
+            className="w-40"
+          >
+            {MEAL_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {MEAL_LABELS[t]}
+              </option>
+            ))}
+          </Select>
+        </label>
+      </div>
+      <p className="-mt-4 text-xs text-muted">
+        The date & meal above apply to both the AI logger and the manual form
+        below.
+      </p>
+
+      <details className="group rounded-2xl border border-border bg-surface-card p-5 shadow-[var(--shadow-soft)]">
+        <summary className="cursor-pointer list-none text-base font-semibold text-heading">
+          🍱 Food library &amp; cooking habits
+          <span className="ml-2 text-xs font-normal text-muted">
+            ({foodLibrary.length} saved foods) — tap to expand
+          </span>
+        </summary>
+        <div className="mt-4 space-y-6">
+          <FoodLibraryPanel items={foodLibrary} onChange={persistLibrary} />
+          <div className="border-t border-divide pt-4">
+            <CookingHabitsPanel value={habits.text} onSave={persistHabits} />
           </div>
+        </div>
+      </details>
+
+      <details className="group rounded-2xl border border-border bg-surface-card p-5 shadow-[var(--shadow-soft)]">
+        <summary className="cursor-pointer list-none text-base font-semibold text-heading">
+          ✍️ Add entry manually
+        </summary>
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-muted">Items</span>
             <Textarea
@@ -122,12 +222,13 @@ export default function DietPage() {
               onChange={(e) => setItemsText(e.target.value)}
               placeholder="What did you eat?"
               rows={2}
-              required
             />
           </label>
           <div className="flex flex-wrap gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-xs font-medium text-muted">Calories (optional)</span>
+              <span className="text-xs font-medium text-muted">
+                Calories (optional)
+              </span>
               <Input
                 type="number"
                 step={1}
@@ -139,13 +240,20 @@ export default function DietPage() {
               />
             </label>
             <label className="flex flex-1 min-w-[200px] flex-col gap-1.5">
-              <span className="text-xs font-medium text-muted">Note (optional)</span>
-              <Input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional" />
+              <span className="text-xs font-medium text-muted">
+                Note (optional)
+              </span>
+              <Input
+                type="text"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Optional"
+              />
             </label>
           </div>
           <Button type="submit">Add entry</Button>
         </form>
-      </Card>
+      </details>
 
       <div className="flex flex-wrap items-center gap-4">
         <label className="flex items-center gap-2">
@@ -157,7 +265,9 @@ export default function DietPage() {
           >
             <option value="all">All</option>
             {MEAL_TYPES.map((t) => (
-              <option key={t} value={t}>{MEAL_LABELS[t]}</option>
+              <option key={t} value={t}>
+                {MEAL_LABELS[t]}
+              </option>
             ))}
           </Select>
         </label>
@@ -176,7 +286,9 @@ export default function DietPage() {
       <div>
         {grouped.length === 0 ? (
           <p className="rounded-2xl border border-border bg-surface-card p-6 text-center text-sm text-muted">
-            {entries.length === 0 ? "No entries yet. Add one above." : "No entries match the current filters."}
+            {entries.length === 0
+              ? "No entries yet. Use the AI logger or add one manually."
+              : "No entries match the current filters."}
           </p>
         ) : (
           <ul className="space-y-6">
@@ -187,33 +299,39 @@ export default function DietPage() {
                 </h2>
                 <Card>
                   <ul className="divide-y divide-divide">
-                    {dayEntries.map((entry) => (
-                      <li
-                        key={entry.id}
-                        className="flex flex-wrap items-start justify-between gap-2 py-3 first:pt-0"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <span className="text-xs font-medium text-muted">
-                            {MEAL_LABELS[entry.mealType]}
-                          </span>
-                          <p className="text-foreground">{entry.itemsText}</p>
-                          {(entry.calories != null || entry.note) && (
-                            <p className="mt-0.5 text-sm text-muted">
-                              {entry.calories != null && <span>{entry.calories} cal</span>}
-                              {entry.calories != null && entry.note && " · "}
-                              {entry.note}
-                            </p>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(entry.id)}
-                          className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+                    {dayEntries.map((entry) => {
+                      const macros = macroLine(entry);
+                      return (
+                        <li
+                          key={entry.id}
+                          className="flex flex-wrap items-start justify-between gap-2 py-3 first:pt-0"
                         >
-                          Delete
-                        </button>
-                      </li>
-                    ))}
+                          <div className="min-w-0 flex-1">
+                            <span className="text-xs font-medium text-muted">
+                              {MEAL_LABELS[entry.mealType]}
+                            </span>
+                            {entry.aiGenerated && (
+                              <Badge className="ml-2">✨ AI</Badge>
+                            )}
+                            <p className="text-foreground">{entry.itemsText}</p>
+                            {(macros || entry.note) && (
+                              <p className="mt-0.5 text-sm text-muted">
+                                {macros}
+                                {macros && entry.note && " · "}
+                                {entry.note}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(entry.id)}
+                            className="text-sm text-danger hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+                          >
+                            Delete
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </Card>
               </li>
