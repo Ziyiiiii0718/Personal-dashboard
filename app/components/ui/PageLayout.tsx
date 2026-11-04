@@ -14,7 +14,7 @@ export function PageLayout({
 }: PageLayoutProps) {
   if (loading) {
     return (
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <div className="max-w-5xl px-4 py-8 sm:px-6">
         <h1 className="mb-6 text-2xl font-semibold tracking-tight text-heading sm:text-3xl">
           {title}
         </h1>
@@ -23,7 +23,7 @@ export function PageLayout({
     );
   }
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <div className="max-w-5xl px-4 py-8 sm:px-6">
       <h1 className="mb-8 text-2xl font-semibold tracking-tight text-heading sm:text-3xl">
         {title}
       </h1>

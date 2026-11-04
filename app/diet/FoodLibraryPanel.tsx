@@ -5,7 +5,7 @@ import { Button, Input } from "../components/ui";
 import { AiAccessError, postAi } from "../lib/aiClient";
 import { compressImage } from "../lib/compressImage";
 import { AiAccessPrompt } from "./AiAccessPrompt";
-import type { FoodItem } from "./types";
+import { caloriesFromMacros, type FoodItem } from "./types";
 
 interface Props {
   items: FoodItem[];
@@ -49,6 +49,15 @@ export function FoodLibraryPanel({ items, onChange }: Props) {
     wrongPassword: boolean;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // With nothing saved yet, the form is the only thing to show.
+  const [formOpen, setFormOpen] = useState(items.length === 0);
+  const showForm = formOpen || items.length === 0;
+
+  const macroCalories = caloriesFromMacros(
+    toNum(draft.protein),
+    toNum(draft.carbs),
+    toNum(draft.fat)
+  );
 
   const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
@@ -102,7 +111,7 @@ export function FoodLibraryPanel({ items, onChange }: Props) {
       id: crypto.randomUUID(),
       name,
       basis: draft.basis.trim() || "per 100g",
-      calories: toNum(draft.calories),
+      calories: toNum(draft.calories) ?? macroCalories,
       protein: toNum(draft.protein),
       carbs: toNum(draft.carbs),
       fat: toNum(draft.fat),
@@ -112,6 +121,7 @@ export function FoodLibraryPanel({ items, onChange }: Props) {
     onChange([item, ...items]);
     setDraft(EMPTY_DRAFT);
     setError(null);
+    setFormOpen(false);
   };
 
   const handleDelete = (id: string) => {
@@ -120,83 +130,10 @@ export function FoodLibraryPanel({ items, onChange }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="space-y-3 rounded-xl border border-border bg-surface p-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*,.heic,.heif"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleScan(file);
-            }}
-          />
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={scanning}
-          >
-            {scanning ? "Reading label…" : "📷 Scan nutrition label"}
-          </Button>
-          <span className="text-xs text-muted">
-            or fill in the fields below
-          </span>
-        </div>
-
-        {accessPrompt && (
-          <AiAccessPrompt
-            wrongPassword={accessPrompt.wrongPassword}
-            onSubmit={() => handleScan(accessPrompt.file)}
-          />
-        )}
-
-        <div className="flex flex-wrap gap-2">
-          <label className="flex min-w-[160px] flex-1 flex-col gap-1">
-            <span className="text-[11px] font-medium text-muted">Name</span>
-            <Input
-              value={draft.name}
-              onChange={(e) => set({ name: e.target.value })}
-              placeholder="e.g. Greek yogurt"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="text-[11px] font-medium text-muted">Basis</span>
-            <Input
-              value={draft.basis}
-              onChange={(e) => set({ basis: e.target.value })}
-              placeholder="per 100g"
-              className="w-32"
-            />
-          </label>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <DraftNum label="cal" value={draft.calories} onChange={(v) => set({ calories: v })} />
-          <DraftNum label="P (g)" value={draft.protein} onChange={(v) => set({ protein: v })} />
-          <DraftNum label="C (g)" value={draft.carbs} onChange={(v) => set({ carbs: v })} />
-          <DraftNum label="F (g)" value={draft.fat} onChange={(v) => set({ fat: v })} />
-        </div>
-        <label className="flex flex-col gap-1">
-          <span className="text-[11px] font-medium text-muted">Note (optional)</span>
-          <Input
-            value={draft.note}
-            onChange={(e) => set({ note: e.target.value })}
-            placeholder="brand, flavor, etc."
-          />
-        </label>
-
-        {error && <p className="text-sm text-danger">{error}</p>}
-
-        <Button type="button" onClick={handleAdd}>
-          Add to library
-        </Button>
-      </div>
-
       {items.length === 0 ? (
         <p className="text-sm text-muted">
-          No saved foods yet. Scan a label or add one above — the AI will reuse
-          these numbers when estimating your meals.
+          No saved foods yet. Scan a label or fill in the form — the AI will
+          reuse these numbers when estimating your meals.
         </p>
       ) : (
         <ul className="divide-y divide-divide">
@@ -212,7 +149,7 @@ export function FoodLibraryPanel({ items, onChange }: Props) {
                 </p>
                 <p className="text-sm text-muted">
                   {[
-                    f.calories != null ? `${f.calories} cal` : null,
+                    f.calories != null ? `${f.calories} kcal` : null,
                     f.protein != null ? `${f.protein}P` : null,
                     f.carbs != null ? `${f.carbs}C` : null,
                     f.fat != null ? `${f.fat}F` : null,
@@ -233,6 +170,110 @@ export function FoodLibraryPanel({ items, onChange }: Props) {
           ))}
         </ul>
       )}
+
+      {showForm ? (
+        <div className="space-y-3 rounded-xl border border-border bg-surface p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.heic,.heif"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleScan(file);
+              }}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={scanning}
+            >
+              {scanning ? "Reading label…" : "📷 Scan nutrition label"}
+            </Button>
+            <span className="text-xs text-muted">
+              or fill in the fields below
+            </span>
+          </div>
+
+          {accessPrompt && (
+            <AiAccessPrompt
+              wrongPassword={accessPrompt.wrongPassword}
+              onSubmit={() => handleScan(accessPrompt.file)}
+            />
+          )}
+
+          <div className="flex flex-wrap gap-2">
+            <label className="flex min-w-[160px] flex-1 flex-col gap-1">
+              <span className="text-[11px] font-medium text-muted">Name</span>
+              <Input
+                value={draft.name}
+                onChange={(e) => set({ name: e.target.value })}
+                placeholder="e.g. Greek yogurt"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-[11px] font-medium text-muted">Basis</span>
+              <Input
+                value={draft.basis}
+                onChange={(e) => set({ basis: e.target.value })}
+                placeholder="per 100g"
+                className="w-32"
+              />
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <DraftNum
+              label="kcal"
+              value={draft.calories}
+              onChange={(v) => set({ calories: v })}
+              placeholder={macroCalories != null ? `≈ ${macroCalories}` : undefined}
+            />
+            <DraftNum label="Protein (g)" value={draft.protein} onChange={(v) => set({ protein: v })} />
+            <DraftNum label="Carbs (g)" value={draft.carbs} onChange={(v) => set({ carbs: v })} />
+            <DraftNum label="Fat (g)" value={draft.fat} onChange={(v) => set({ fat: v })} />
+          </div>
+          {!draft.calories.trim() && macroCalories != null && (
+            <p className="-mt-1 text-xs text-muted">
+              Leave kcal empty to use {macroCalories} kcal, calculated from the macros.
+            </p>
+          )}
+          <label className="flex flex-col gap-1">
+            <span className="text-[11px] font-medium text-muted">Note (optional)</span>
+            <Input
+              value={draft.note}
+              onChange={(e) => set({ note: e.target.value })}
+              placeholder="brand, flavor, etc."
+            />
+          </label>
+
+          {error && <p className="text-sm text-danger">{error}</p>}
+
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" onClick={handleAdd}>
+              Add to library
+            </Button>
+            {items.length > 0 && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setFormOpen(false);
+                  setDraft(EMPTY_DRAFT);
+                  setError(null);
+                }}
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <Button type="button" variant="secondary" onClick={() => setFormOpen(true)}>
+          + Add food
+        </Button>
+      )}
     </div>
   );
 }
@@ -241,10 +282,12 @@ function DraftNum({
   label,
   value,
   onChange,
+  placeholder,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  placeholder?: string;
 }) {
   return (
     <label className="flex flex-col gap-1">
@@ -254,7 +297,7 @@ function DraftNum({
         min={0}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-20"
+        placeholder={placeholder}
       />
     </label>
   );

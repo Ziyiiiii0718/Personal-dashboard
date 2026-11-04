@@ -18,6 +18,18 @@ export const MEAL_LABELS: Record<MealType, string> = {
   late_snack: "Late Snack",
 };
 
+/** The meal most likely being logged at the given time of day. */
+export function mealTypeForTime(date: Date = new Date()): MealType {
+  const minutes = date.getHours() * 60 + date.getMinutes();
+  if (minutes < 5 * 60) return "late_snack";
+  if (minutes < 10 * 60) return "breakfast";
+  if (minutes < 11 * 60 + 30) return "morning_snack";
+  if (minutes < 14 * 60) return "lunch";
+  if (minutes < 17 * 60) return "afternoon_snack";
+  if (minutes < 21 * 60) return "dinner";
+  return "late_snack";
+}
+
 /** Display order for sorting entries within a date. */
 export const MEAL_ORDER: MealType[] = [...MEAL_TYPES];
 
@@ -53,6 +65,16 @@ export interface FoodItem {
   fat?: number; // grams
   note?: string;
   createdAt: string; // ISO
+}
+
+/** Calories implied by macros (4 kcal/g protein and carbs, 9 kcal/g fat). */
+export function caloriesFromMacros(
+  protein?: number,
+  carbs?: number,
+  fat?: number
+): number | undefined {
+  if (protein == null && carbs == null && fat == null) return undefined;
+  return Math.round((protein ?? 0) * 4 + (carbs ?? 0) * 4 + (fat ?? 0) * 9);
 }
 
 /** Free-form notes about how the user cooks / their usual portions. */

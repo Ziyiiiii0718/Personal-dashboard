@@ -66,6 +66,12 @@ export default function TodoPage() {
     persist(items.filter((t) => t.id !== id));
   };
 
+  // Open tasks first, finished ones sink to the bottom (order otherwise kept).
+  const sortedItems = [
+    ...items.filter((t) => !t.done),
+    ...items.filter((t) => t.done),
+  ];
+
   if (!mounted) {
     return <PageLayout title="Todo" loading />;
   }
@@ -100,7 +106,7 @@ export default function TodoPage() {
         ) : (
           <Card>
             <ul className="divide-y divide-divide">
-              {items.map((item) => (
+              {sortedItems.map((item) => (
                 <li
                   key={item.id}
                   className="flex items-start gap-3 py-3 first:pt-0"
@@ -109,7 +115,7 @@ export default function TodoPage() {
                     type="checkbox"
                     checked={item.done}
                     onChange={() => toggleDone(item.id)}
-                    className="mt-1 h-4 w-4 rounded border-input-border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+                    className="mt-1 h-4 w-4 rounded border-input-border accent-[var(--primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
                   />
                   <div className="min-w-0 flex-1">
                     <span

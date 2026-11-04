@@ -68,7 +68,13 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden w-44 shrink-0 flex-col border-r border-sidebar-border bg-sidebar-bg px-3 py-4 md:flex">
+      <aside className="sticky top-0 hidden h-screen w-48 shrink-0 flex-col border-r border-sidebar-border bg-sidebar-bg px-4 py-6 md:flex">
+        <Link
+          href="/"
+          className="mb-6 px-3 text-base font-semibold tracking-tight text-heading hover:text-heading"
+        >
+          Personal Dashboard
+        </Link>
         <NavLinks pathname={pathname} />
       </aside>
 

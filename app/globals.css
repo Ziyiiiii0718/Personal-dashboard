@@ -10,10 +10,12 @@
   --border: #e2c4c8;
   --surface: #ffffff;
   --surface-card: #ffffff;
-  --primary: #e4a0a8;
-  --primary-hover: #dd8f98;
+  /* Deep enough for white text to pass WCAG AA (4.5:1). */
+  --primary: #b85866;
+  --primary-hover: #a94f5c;
   --primary-foreground: #ffffff;
   --input-border: #e2c4c8;
+  --placeholder: #9c8a8e;
   --focus-ring: #e4a0a8;
   --sidebar-bg: #fdf2f4;
   --sidebar-border: #e2c4c8;
@@ -40,6 +42,7 @@
     --primary-hover: #eab0b7;
     --primary-foreground: #2a1f21;
     --input-border: #5a4548;
+    --placeholder: #8a7579;
     --focus-ring: #e4a0a8;
     --sidebar-bg: #2a1f21;
     --sidebar-border: #5a4548;
@@ -64,8 +67,10 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-input-border: var(--input-border);
+  --color-placeholder: var(--placeholder);
   --color-focus-ring: var(--focus-ring);
   --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-active: var(--sidebar-active);
   --color-danger: var(--danger);
   --color-divide: var(--divide);
