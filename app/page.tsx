@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Card } from "./components/ui";
+import { loadTodos, saveTodos } from "./todo/storage";
 import {
   getDashboardData,
   type DashboardData,
@@ -38,6 +39,7 @@ function DashboardCard({
 }) {
   return (
     <Card
+      className="relative h-full transition-shadow hover:shadow-[0_4px_20px_rgba(184,88,102,0.14)]"
       header={
         <>
           <h2 className="text-base font-semibold text-heading">
@@ -45,7 +47,8 @@ function DashboardCard({
           </h2>
           <Link
             href={href}
-            className="text-xs font-medium text-link hover:text-link-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:rounded focus-visible:outline-focus-ring"
+            aria-label={`Open ${title}`}
+            className="text-xs font-medium text-link after:absolute after:inset-0 after:rounded-2xl after:content-[''] hover:text-link-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:rounded focus-visible:outline-focus-ring"
           >
             View →
           </Link>
@@ -58,7 +61,7 @@ function DashboardCard({
       {emptyHref != null && (
         <Link
           href={emptyHref}
-          className="mt-3 inline-block rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-sidebar-active focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+          className="relative z-10 mt-3 inline-block rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-sidebar-active focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
         >
           Add
         </Link>
@@ -76,7 +79,7 @@ export default function DashboardPage() {
 
   if (data == null) {
     return (
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <div className="max-w-6xl px-4 py-8 sm:px-6">
         <h1 className="mb-6 text-2xl font-semibold tracking-tight text-heading sm:text-3xl">
           Dashboard
         </h1>
@@ -87,191 +90,204 @@ export default function DashboardPage() {
 
   const { todos, deadlines, weight, diet, fitness } = data;
 
+  const completeTodo = (id: string) => {
+    saveTodos(
+      loadTodos().map((t) => (t.id === id ? { ...t, done: true } : t))
+    );
+    setData(getDashboardData());
+  };
+
+  const todayLabel = new Date().toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <h1 className="mb-8 text-2xl font-semibold tracking-tight text-heading sm:text-3xl">
+    <div className="max-w-6xl px-4 py-8 sm:px-6">
+        <h1 className="text-2xl font-semibold tracking-tight text-heading sm:text-3xl">
           Dashboard
         </h1>
+        <p className="mb-8 mt-1 text-sm text-muted">{todayLabel}</p>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-          {/* Left: Todo + Upcoming */}
-          <div className="flex flex-col gap-6">
-            <DashboardCard
-              title="Todo"
-              emoji="✅"
-              href="/todo"
-              emptyHref={todos.total === 0 ? "/todo" : undefined}
-            >
-              {todos.total === 0 ? (
-                <p className="text-muted">
-                  Nothing on your list yet.
-                </p>
-              ) : (
-                <>
-                  <p className="mb-3">
-                    <span className="font-medium text-foreground">
-                      {todos.remaining}
-                    </span>
-                    <span className="text-muted">
-                      {" "}
-                      remaining / {todos.total} total
-                    </span>
-                  </p>
-                  {todos.preview.length > 0 ? (
-                    <ul className="space-y-1.5">
-                      {todos.preview.map((t) => (
-                        <li key={t.id} className="truncate text-foreground">
-                          {t.text}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-muted">
-                      All done for now.
-                    </p>
-                  )}
-                </>
-              )}
-            </DashboardCard>
-
-            <DashboardCard
-              title="Upcoming"
-              emoji="📅"
-              href="/calendar"
-              emptyHref={deadlines.upcoming.length === 0 ? "/calendar" : undefined}
-            >
-              {deadlines.upcoming.length === 0 ? (
-                <p className="text-muted">
-                  No deadlines in the next 7 days.
-                </p>
-              ) : (
-                <ul className="space-y-2">
-                  {deadlines.upcoming.map((d) => (
-                    <li key={d.id} className="flex flex-wrap items-center gap-1.5">
-                      <span className="text-foreground">
-                        {d.title}
-                      </span>
-                      <span className="rounded-full bg-sidebar-active px-2 py-0.5 text-xs text-muted">
-                        {d.type === "exam" ? "Exam" : "DDL"}
-                      </span>
-                      <span className="text-muted">
-                        {formatDeadlineDate(d.date)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </DashboardCard>
-          </div>
-
-          {/* Right: Weight, Diet, Fitness */}
-          <div className="flex flex-col gap-6">
-            <DashboardCard
-              title="Weight"
-              emoji="⚖️"
-              href="/weight"
-              emptyHref={weight.latest == null ? "/weight" : undefined}
-            >
-              {weight.latest == null ? (
-                <p className="text-muted">
-                  Log your first weight to track progress.
-                </p>
-              ) : (
-                <>
-                  <p>
-                    <span className="font-medium text-foreground">
-                      {weight.latest} kg
-                    </span>
-                    <span className="text-muted">
-                      {" "}
-                      latest
-                    </span>
-                  </p>
-                  {weight.goal != null && (
-                    <p className="mt-1 text-muted">
-                      Goal {weight.goal} kg
-                      {weight.delta != null && (
-                        <>
-                          {" "}
-                          · {weight.delta > 0 ? `${weight.delta.toFixed(1)} to go` : weight.delta < 0 ? `${(-weight.delta).toFixed(1)} below` : "at goal"}
-                        </>
-                      )}
-                    </p>
-                  )}
-                </>
-              )}
-            </DashboardCard>
-
-            <DashboardCard
-              title="Diet Today"
-              emoji="🍽️"
-              href="/diet"
-              emptyHref={diet.mealsLogged === 0 ? "/diet" : undefined}
-            >
-              <p className="mb-1">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <DashboardCard
+          title="Todo"
+          emoji="✅"
+          href="/todo"
+          emptyHref={todos.total === 0 ? "/todo" : undefined}
+        >
+          {todos.total === 0 ? (
+            <p className="text-muted">
+              Nothing on your list yet.
+            </p>
+          ) : (
+            <>
+              <p className="mb-3">
                 <span className="font-medium text-foreground">
-                  {diet.mealsLogged}
+                  {todos.remaining}
                 </span>
                 <span className="text-muted">
                   {" "}
-                  / 6 meals logged
+                  remaining / {todos.total} total
                 </span>
               </p>
-              {diet.totalCal > 0 && (
-                <p className="text-muted">
-                  {diet.totalCal} cal
-                  {diet.totalProtein > 0 && <> · {diet.totalProtein}g protein</>}
-                  {" "}total
-                </p>
-              )}
-              {diet.missingMealTypes.length > 0 && diet.missingMealTypes.length < 6 && (
-                <p className="mt-1.5 text-muted">
-                  Missing: {formatMissingMeals(diet.missingMealTypes)}
-                </p>
-              )}
-              {diet.mealsLogged === 0 && (
-                <p className="text-muted">
-                  Log your first meal of the day.
-                </p>
-              )}
-            </DashboardCard>
-
-            <DashboardCard
-              title="Fitness Today"
-              emoji="🏋️"
-              href="/fitness"
-              emptyHref={fitness.sessions === 0 ? "/fitness" : undefined}
-            >
-              {fitness.sessions === 0 ? (
-                <p className="text-muted">
-                  Log a workout to start the day.
-                </p>
+              {todos.preview.length > 0 ? (
+                <ul className="space-y-1.5">
+                  {todos.preview.map((t) => (
+                    <li key={t.id}>
+                      <label className="relative z-10 flex w-fit max-w-full cursor-pointer items-center gap-2 text-foreground">
+                        <input
+                          type="checkbox"
+                          checked={false}
+                          onChange={() => completeTodo(t.id)}
+                          aria-label={`Mark "${t.text}" done`}
+                          className="h-4 w-4 shrink-0 accent-[var(--primary)]"
+                        />
+                        <span className="truncate">{t.text}</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
               ) : (
-                <>
-                  <p>
-                    <span className="font-medium text-foreground">
-                      {fitness.sessions}
-                    </span>
-                    <span className="text-muted">
-                      {" "}
-                      sessions
-                    </span>
-                    {fitness.durationMin > 0 && (
-                      <span className="text-muted">
-                        {" "}
-                        · {fitness.durationMin} min total
-                      </span>
-                    )}
-                  </p>
-                  {fitness.categories.length > 0 && (
-                    <p className="mt-1 text-muted">
-                      {fitness.categories.join(", ")}
-                    </p>
-                  )}
-                </>
+                <p className="text-muted">
+                  All done for now.
+                </p>
               )}
-            </DashboardCard>
-          </div>
+            </>
+          )}
+        </DashboardCard>
+        <DashboardCard
+          title="Diet Today"
+          emoji="🍽️"
+          href="/diet"
+          emptyHref={diet.mealsLogged === 0 ? "/diet" : undefined}
+        >
+          <p className="mb-1">
+            <span className="font-medium text-foreground">
+              {diet.mealsLogged}
+            </span>
+            <span className="text-muted">
+              {" "}
+              / 6 meals logged
+            </span>
+          </p>
+          {diet.totalCal > 0 && (
+            <p className="text-muted">
+              {diet.totalCal} kcal
+              {diet.totalProtein > 0 && <> · {diet.totalProtein}g protein</>}
+              {" "}total
+            </p>
+          )}
+          {diet.missingMealTypes.length > 0 && diet.missingMealTypes.length < 6 && (
+            <p className="mt-1.5 text-muted">
+              Missing: {formatMissingMeals(diet.missingMealTypes)}
+            </p>
+          )}
+          {diet.mealsLogged === 0 && (
+            <p className="text-muted">
+              Log your first meal of the day.
+            </p>
+          )}
+        </DashboardCard>
+        <DashboardCard
+          title="Fitness Today"
+          emoji="🏋️"
+          href="/fitness"
+          emptyHref={fitness.sessions === 0 ? "/fitness" : undefined}
+        >
+          {fitness.sessions === 0 ? (
+            <p className="text-muted">
+              Log a workout to start the day.
+            </p>
+          ) : (
+            <>
+              <p>
+                <span className="font-medium text-foreground">
+                  {fitness.sessions}
+                </span>
+                <span className="text-muted">
+                  {" "}
+                  sessions
+                </span>
+                {fitness.durationMin > 0 && (
+                  <span className="text-muted">
+                    {" "}
+                    · {fitness.durationMin} min total
+                  </span>
+                )}
+              </p>
+              {fitness.categories.length > 0 && (
+                <p className="mt-1 text-muted">
+                  {fitness.categories.join(", ")}
+                </p>
+              )}
+            </>
+          )}
+        </DashboardCard>
+        <DashboardCard
+          title="Upcoming"
+          emoji="📅"
+          href="/calendar"
+          emptyHref={deadlines.upcoming.length === 0 ? "/calendar" : undefined}
+        >
+          {deadlines.upcoming.length === 0 ? (
+            <p className="text-muted">
+              No deadlines in the next 7 days.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {deadlines.upcoming.map((d) => (
+                <li key={d.id} className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-foreground">
+                    {d.title}
+                  </span>
+                  <span className="rounded-full bg-sidebar-active px-2 py-0.5 text-xs text-muted">
+                    {d.type === "exam" ? "Exam" : "DDL"}
+                  </span>
+                  <span className="text-muted">
+                    {formatDeadlineDate(d.date)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </DashboardCard>
+        <DashboardCard
+          title="Weight"
+          emoji="⚖️"
+          href="/weight"
+          emptyHref={weight.latest == null ? "/weight" : undefined}
+        >
+          {weight.latest == null ? (
+            <p className="text-muted">
+              Log your first weight to track progress.
+            </p>
+          ) : (
+            <>
+              <p>
+                <span className="font-medium text-foreground">
+                  {weight.latest} kg
+                </span>
+                <span className="text-muted">
+                  {" "}
+                  latest
+                </span>
+              </p>
+              {weight.goal != null && (
+                <p className="mt-1 text-muted">
+                  Goal {weight.goal} kg
+                  {weight.delta != null && (
+                    <>
+                      {" "}
+                      · {weight.delta > 0 ? `${weight.delta.toFixed(1)} to go` : weight.delta < 0 ? `${(-weight.delta).toFixed(1)} below` : "at goal"}
+                    </>
+                  )}
+                </p>
+              )}
+            </>
+          )}
+        </DashboardCard>
         </div>
     </div>
   );

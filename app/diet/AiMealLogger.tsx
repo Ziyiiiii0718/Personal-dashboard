@@ -179,7 +179,12 @@ export function AiMealLogger({
               {speech.listening ? "● Stop" : "🎤 Speak"}
             </Button>
           )}
-          <Button type="button" onClick={handleAnalyze} disabled={loading}>
+          <Button
+            type="button"
+            onClick={handleAnalyze}
+            disabled={loading || !description.trim()}
+            title={!description.trim() ? "Describe your meal first" : undefined}
+          >
             {loading ? "Analyzing…" : "Analyze with AI"}
           </Button>
           {speech.listening && (
@@ -241,24 +246,24 @@ export function AiMealLogger({
                       Remove
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     <MacroField
-                      label="cal"
+                      label="kcal"
                       value={item.calories}
                       onChange={(v) => updateItem(idx, { calories: v })}
                     />
                     <MacroField
-                      label="P (g)"
+                      label="Protein (g)"
                       value={item.protein}
                       onChange={(v) => updateItem(idx, { protein: v })}
                     />
                     <MacroField
-                      label="C (g)"
+                      label="Carbs (g)"
                       value={item.carbs}
                       onChange={(v) => updateItem(idx, { carbs: v })}
                     />
                     <MacroField
-                      label="F (g)"
+                      label="Fat (g)"
                       value={item.fat}
                       onChange={(v) => updateItem(idx, { fat: v })}
                     />
@@ -273,7 +278,7 @@ export function AiMealLogger({
             <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
               <p className="text-sm text-foreground">
                 Total:{" "}
-                <span className="font-medium">{totals.calories} cal</span>
+                <span className="font-medium">{totals.calories} kcal</span>
                 <span className="text-muted">
                   {" "}
                   · {totals.protein}P / {totals.carbs}C / {totals.fat}F
@@ -313,7 +318,6 @@ function MacroField({
           const n = Number(raw);
           onChange(Number.isFinite(n) ? n : undefined);
         }}
-        className="w-20"
       />
     </label>
   );

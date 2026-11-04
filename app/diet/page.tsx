@@ -11,7 +11,7 @@ import {
   Textarea,
 } from "../components/ui";
 import type { CookingHabits, DietEntry, FoodItem, MealType } from "./types";
-import { MEAL_LABELS, MEAL_ORDER, MEAL_TYPES } from "./types";
+import { MEAL_LABELS, MEAL_ORDER, MEAL_TYPES, mealTypeForTime } from "./types";
 import { loadEntries, saveEntries } from "./storage";
 import { loadFoodLibrary, saveFoodLibrary } from "./foodLibrary";
 import { loadHabits, saveHabits } from "./habits";
@@ -19,6 +19,26 @@ import { AiMealLogger } from "./AiMealLogger";
 import { FoodLibraryPanel } from "./FoodLibraryPanel";
 import { CookingHabitsPanel } from "./CookingHabitsPanel";
 import { todayISO } from "../lib/dates";
+
+/** Rotates when its parent <details className="group"> opens. */
+function Chevron() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="shrink-0 text-muted transition-transform group-open:rotate-90"
+    >
+      <polyline points="9 6 15 12 9 18" />
+    </svg>
+  );
+}
 
 function formatDate(dateISO: string): string {
   const d = new Date(dateISO + "T00:00:00");
@@ -32,7 +52,7 @@ function formatDate(dateISO: string): string {
 
 function macroLine(entry: DietEntry): string {
   return [
-    entry.calories != null ? `${entry.calories} cal` : null,
+    entry.calories != null ? `${entry.calories} kcal` : null,
     entry.protein != null ? `${entry.protein}P` : null,
     entry.carbs != null ? `${entry.carbs}C` : null,
     entry.fat != null ? `${entry.fat}F` : null,
@@ -70,7 +90,7 @@ export default function DietPage() {
   const [mounted, setMounted] = useState(false);
 
   const [dateISO, setDateISO] = useState(todayISO());
-  const [mealType, setMealType] = useState<MealType>("breakfast");
+  const [mealType, setMealType] = useState<MealType>(() => mealTypeForTime());
   const [itemsText, setItemsText] = useState("");
   const [calories, setCalories] = useState("");
   const [note, setNote] = useState("");
@@ -149,21 +169,23 @@ export default function DietPage() {
   });
   const grouped = groupByDateSorted(filtered);
 
+  const selectedDay = entries.filter((e) => e.dateISO === dateISO);
+  const round1 = (n: number) => Math.round(n * 10) / 10;
+  const selectedDayTotals = {
+    count: selectedDay.length,
+    calories: Math.round(selectedDay.reduce((s, e) => s + (e.calories ?? 0), 0)),
+    protein: round1(selectedDay.reduce((s, e) => s + (e.protein ?? 0), 0)),
+    carbs: round1(selectedDay.reduce((s, e) => s + (e.carbs ?? 0), 0)),
+    fat: round1(selectedDay.reduce((s, e) => s + (e.fat ?? 0), 0)),
+  };
+
   if (!mounted) {
     return <PageLayout title="Diet" loading />;
   }
 
   return (
     <PageLayout title="Diet">
-      <AiMealLogger
-        dateISO={dateISO}
-        mealType={mealType}
-        foodLibrary={foodLibrary}
-        habits={habits.text}
-        onSaved={handleAiSaved}
-      />
-
-      <div className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap">
+      <div className="-mt-2 grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:items-end">
         <label className="flex min-w-0 flex-col gap-1.5">
           <span className="text-xs font-medium text-muted">Date</span>
           <Input
@@ -186,17 +208,32 @@ export default function DietPage() {
             ))}
           </Select>
         </label>
+        {selectedDayTotals.count > 0 && (
+          <p className="col-span-2 text-sm text-muted sm:ml-auto sm:pb-2">
+            <span className="font-medium text-foreground">
+              {selectedDayTotals.calories} kcal
+            </span>{" "}
+            · {selectedDayTotals.protein}P / {selectedDayTotals.carbs}C /{" "}
+            {selectedDayTotals.fat}F · {selectedDayTotals.count}{" "}
+            {selectedDayTotals.count === 1 ? "entry" : "entries"} logged
+          </p>
+        )}
       </div>
-      <p className="-mt-4 text-xs text-muted">
-        The date & meal above apply to both the AI logger and the manual form
-        below.
-      </p>
+
+      <AiMealLogger
+        dateISO={dateISO}
+        mealType={mealType}
+        foodLibrary={foodLibrary}
+        habits={habits.text}
+        onSaved={handleAiSaved}
+      />
 
       <details className="group rounded-2xl border border-border bg-surface-card p-5 shadow-[var(--shadow-soft)]">
-        <summary className="cursor-pointer list-none text-base font-semibold text-heading">
+        <summary className="flex cursor-pointer list-none items-center gap-2 text-base font-semibold text-heading [&::-webkit-details-marker]:hidden">
+          <Chevron />
           🍱 Food library &amp; cooking habits
-          <span className="ml-2 text-xs font-normal text-muted">
-            ({foodLibrary.length} saved foods) — tap to expand
+          <span className="text-xs font-normal text-muted">
+            {foodLibrary.length} saved {foodLibrary.length === 1 ? "food" : "foods"}
           </span>
         </summary>
         <div className="mt-4 space-y-6">
@@ -208,7 +245,8 @@ export default function DietPage() {
       </details>
 
       <details className="group rounded-2xl border border-border bg-surface-card p-5 shadow-[var(--shadow-soft)]">
-        <summary className="cursor-pointer list-none text-base font-semibold text-heading">
+        <summary className="flex cursor-pointer list-none items-center gap-2 text-base font-semibold text-heading [&::-webkit-details-marker]:hidden">
+          <Chevron />
           ✍️ Add entry manually
         </summary>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
