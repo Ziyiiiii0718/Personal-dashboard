@@ -56,7 +56,7 @@ Supported meal types:
 
 Features:
 - **AI meal logger** — describe a meal by **voice** (browser speech-to-text) or text; the AI parses it into items and estimates calories + protein/carbs/fat, which you can edit before saving.
-- **Food library** — scan a nutrition-label photo (营养成分表) and the AI extracts the facts; saved foods are reused for more accurate future estimates.
+- **Food library** — scan a nutrition-label photo (营养成分表, including iPhone HEIC photos) and the AI extracts the facts; saved foods are reused for more accurate future estimates.
 - **Cooking habits** — free-form notes (typical portions, oil usage, preferences) fed to the AI to tune its estimates.
 - Manual logging with optional calories/notes still available.
 - Entries grouped by date (newest first); within each day, meals display in a fixed order.
