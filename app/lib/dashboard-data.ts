@@ -13,16 +13,7 @@ import { CATEGORY_LABELS } from "../fitness/types";
 import type { WorkoutCategory } from "../fitness/types";
 import { loadTodos } from "../todo/storage";
 import { loadEntries as loadWeightEntries, loadGoalKg } from "../weight/storage";
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function addDays(iso: string, days: number): string {
-  const d = new Date(iso + "T00:00:00");
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
+import { addDays, todayISO } from "./dates";
 
 export function getDashboardData() {
   const todos = loadTodos();

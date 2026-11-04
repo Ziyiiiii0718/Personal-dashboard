@@ -18,12 +18,9 @@ import {
   setLockState,
   setPassword as setPasswordStorage,
 } from "./storage";
+import { todayISO } from "../lib/dates";
 
 const INACTIVITY_MS = 10 * 60 * 1000; // 10 minutes
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function formatDate(dateISO: string): string {
   const d = new Date(dateISO + "T00:00:00");
@@ -235,7 +232,7 @@ export default function DiaryPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `diary-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `diary-backup-${todayISO()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };

@@ -18,10 +18,7 @@ import { loadHabits, saveHabits } from "./habits";
 import { AiMealLogger } from "./AiMealLogger";
 import { FoodLibraryPanel } from "./FoodLibraryPanel";
 import { CookingHabitsPanel } from "./CookingHabitsPanel";
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayISO } from "../lib/dates";
 
 function formatDate(dateISO: string): string {
   const d = new Date(dateISO + "T00:00:00");
@@ -166,8 +163,8 @@ export default function DietPage() {
         onSaved={handleAiSaved}
       />
 
-      <div className="flex flex-wrap gap-4">
-        <label className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap">
+        <label className="flex min-w-0 flex-col gap-1.5">
           <span className="text-xs font-medium text-muted">Date</span>
           <Input
             type="date"
@@ -175,12 +172,12 @@ export default function DietPage() {
             onChange={(e) => setDateISO(e.target.value)}
           />
         </label>
-        <label className="flex flex-col gap-1.5">
+        <label className="flex min-w-0 flex-col gap-1.5">
           <span className="text-xs font-medium text-muted">Meal</span>
           <Select
             value={mealType}
             onChange={(e) => setMealType(e.target.value as MealType)}
-            className="w-40"
+            className="w-full sm:w-40"
           >
             {MEAL_TYPES.map((t) => (
               <option key={t} value={t}>

@@ -5,10 +5,7 @@ import { Badge, Button, Card, Input, PageLayout, Select, Textarea } from "../com
 import type { WorkoutEntry, WorkoutCategory, Intensity } from "./types";
 import { CATEGORY_LABELS, INTENSITY_LABELS, WORKOUT_CATEGORIES } from "./types";
 import { loadEntries, saveEntries } from "./storage";
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayISO } from "../lib/dates";
 
 function formatDate(dateISO: string): string {
   const d = new Date(dateISO + "T00:00:00");
@@ -138,14 +135,14 @@ export default function FitnessPage() {
 
       <Card>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex flex-wrap gap-4">
-            <label className="flex flex-col gap-1.5">
+          <div className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap">
+            <label className="flex min-w-0 flex-col gap-1.5">
               <span className="text-xs font-medium text-muted">Date</span>
               <Input type="date" value={dateISO} onChange={(e) => setDateISO(e.target.value)} />
             </label>
-            <label className="flex flex-col gap-1.5">
+            <label className="flex min-w-0 flex-col gap-1.5">
               <span className="text-xs font-medium text-muted">Category</span>
-              <Select value={category} onChange={(e) => setCategory(e.target.value as WorkoutCategory)} className="w-40">
+              <Select value={category} onChange={(e) => setCategory(e.target.value as WorkoutCategory)} className="w-full sm:w-40">
                 {WORKOUT_CATEGORIES.map((c) => (
                   <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
                 ))}

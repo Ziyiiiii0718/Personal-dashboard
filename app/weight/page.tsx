@@ -12,10 +12,7 @@ import {
   saveEntries,
   saveGoalKg,
 } from "./storage";
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayISO } from "../lib/dates";
 
 function formatDate(dateISO: string): string {
   const d = new Date(dateISO + "T00:00:00");

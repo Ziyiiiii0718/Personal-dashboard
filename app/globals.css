@@ -110,3 +110,14 @@ button:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
+
+/* iOS Safari sizes native date inputs itself, ignoring their width and height. */
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+}
+input[type="date"]::-webkit-date-and-time-value {
+  margin: 0;
+  text-align: left;
+}
